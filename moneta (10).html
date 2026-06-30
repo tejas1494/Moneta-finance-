@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Moneta – Personal Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#0B0B0F;--surf:#13131A;--surf2:#1C1C27;--border:#252535;--accent:#7C5CFC;--green:#10D9A8;--amber:#F59E0B;--red:#F43F5E;--text:#F0F0F8;--muted:#7A7A92;--subtle:#2C2C40}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+#app{display:flex;height:100vh}
+#sb{width:218px;background:#0D0D14;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;flex-shrink:0;overflow-y:auto}
+#main{flex:1;overflow-y:auto;padding:26px 28px;min-width:0}
+.logo{display:flex;align-items:center;gap:9px;margin-bottom:24px}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.logo-name{font-size:17px;font-weight:700;letter-spacing:-0.4px}
+.logo-sub{font-size:10px;color:var(--subtle);margin-left:39px;margin-top:-22px;margin-bottom:8px}
+nav{flex:1;display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.nb{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:400;transition:all 0.12s;text-align:left;width:100%}
+.nb:hover{color:var(--text)}.nb.active{background:#7C5CFC22;color:var(--accent);font-weight:600}.nb svg{flex-shrink:0}
+.nb-section{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--subtle);padding:10px 11px 4px;margin-top:4px}
+.sb-prof{display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:9px;border:none;cursor:pointer;background:transparent;width:100%;text-align:left;margin-top:6px}
+.sb-av{width:28px;height:28px;background:var(--surf2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0}
+.sb-pname{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.sb-psal{font-size:10px;color:var(--subtle)}
+.card{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:20px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.1s}
+.btn:hover{opacity:.88}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-s{background:var(--surf2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s:hover{background:var(--border)}
+.btn-xs{background:var(--surf2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:12px;font-family:'Space Grotesk',sans-serif;cursor:pointer;font-weight:600;transition:all 0.1s;line-height:1.6}
+.btn-xs:hover{color:var(--text);border-color:var(--accent)}
+.btn-del{background:transparent;color:var(--subtle);border:none;cursor:pointer;padding:4px;display:flex;align-items:center;border-radius:5px;transition:color 0.1s}
+.btn-del:hover{color:var(--red)}
+.btn-g{background:var(--green);color:#0a2e28;border:none;border-radius:8px;padding:9px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-g:hover{opacity:.88}
+input,select,textarea{background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;width:100%;outline:none;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select{-webkit-appearance:none;color-scheme:dark}
+input[type=range]{-webkit-appearance:none;appearance:none;height:3px;background:var(--border);border:none;border-radius:3px;padding:0;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;cursor:pointer;border:none}
+input[type=color]{padding:3px;height:34px;border-radius:6px;cursor:pointer;width:100%}
+input[type=checkbox]{width:auto;cursor:pointer}
+label{cursor:pointer}
+.lbl{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:5px;display:block}
+.badge{display:inline-block;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:600}
+.sec{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:13px}
+.mono{font-family:'JetBrains Mono',monospace}
+.c-acc{color:var(--accent)}.c-g{color:var(--green)}.c-a{color:var(--amber)}.c-r{color:var(--red)}.c-m{color:var(--muted)}
+.phd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px}
+.phd h1{font-size:22px;font-weight:700;letter-spacing:-0.4px}
+.phd p{color:var(--muted);font-size:13px;margin-top:4px}
+.empty{padding:48px 0;text-align:center;color:var(--subtle)}
+.empty .ei{font-size:38px;margin-bottom:10px}
+.empty p{font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surf2)}
+.progress{height:4px;background:var(--surf2);border-radius:4px;overflow:hidden}
+.pbar{height:100%;border-radius:4px;transition:width 0.4s}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+.alert{border-radius:8px;padding:10px 13px;font-size:12px;display:flex;align-items:flex-start;gap:8px;margin-bottom:12px}
+.alert svg{flex-shrink:0;margin-top:1px}
+.aw{background:#F59E0B18;border:1px solid #F59E0B44;color:var(--amber)}
+.ae{background:#F43F5E18;border:1px solid #F43F5E44;color:var(--red)}
+.ag{background:#10D9A818;border:1px solid #10D9A844;color:var(--green)}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;align-items:center;justify-content:center}
+#ov.open{display:flex}
+#modal{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:24px;width:480px;max-width:94vw;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+#modal.wide{width:680px}
+.mhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.mhd h2{font-size:17px;font-weight:700}
+.fcol{display:flex;flex-direction:column;gap:13px}
+.frow{display:flex;gap:10px}.frow>*{flex:1}
+.toggle-row{display:flex;background:var(--surf2);border-radius:8px;padding:3px;gap:3px}
+.toggle-btn{flex:1;padding:7px;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s}
+.toggle-btn.active{background:var(--accent);color:#fff}
+.swatches{display:flex;gap:7px;flex-wrap:wrap}
+.sw{width:24px;height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all 0.1s}
+.sw.sel{border-color:#fff;transform:scale(1.12)}
+.stat-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px}
+.stat-val{font-size:21px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.cat-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
+.cat-row:last-child{border-bottom:none}
+/* Credit Card Tile */
+.cc-tile{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:18px;border-top-width:3px;display:flex;flex-direction:column;gap:0}
+.cc-util-bar{height:8px;background:var(--surf2);border-radius:8px;overflow:hidden;margin:6px 0}
+.cc-util-fill{height:100%;border-radius:8px;transition:width 0.5s}
+.cc-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}
+.cc-info-cell{background:var(--bg);border-radius:8px;padding:9px 11px}
+.cc-info-lbl{font-size:10px;color:var(--muted);margin-bottom:3px}
+.cc-info-val{font-size:13px;font-weight:600}
+.cc-status{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;border:1px solid;margin:10px 0}
+.pay-quick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pay-opt{border:1px solid var(--border);border-radius:9px;padding:10px 8px;cursor:pointer;text-align:center;background:var(--surf2);transition:all 0.15s;font-family:'Space Grotesk',sans-serif;color:var(--text)}
+.pay-opt:hover{border-color:var(--accent);background:var(--accent)22}
+.pay-opt.sel{border-color:var(--accent);background:var(--accent)22}
+.pay-opt-lbl{font-size:11px;color:var(--muted);margin-bottom:4px}
+.pay-opt-val{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.hist-entry{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.hist-entry:last-child{border-bottom:none}
+.hist-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:960px){#sb{width:56px;padding:14px 8px}.logo-name,.logo-sub,.nb span,.sb-pname,.sb-psal,.nb-section{display:none}.nb{justify-content:center;padding:9px}.sb-prof{justify-content:center}.sb-av{width:32px;height:32px}}
+</style>
+</head>
+<body>
+<div id="app"><aside id="sb"></aside><main id="main"></main></div>
+<div id="ov" onclick="ovClick(event)"><div id="modal"></div></div>
+<input type="file" id="file-import" accept=".json" style="display:none" onchange="handleImportFile(event)">
+<script>
+// ═══════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════
+const DEFAULT_CATS=[
+  {id:'rent',label:'Rent & Housing',emoji:'🏠',color:'#7C5CFC',builtIn:true,def:30},
+  {id:'food',label:'Food & Dining',emoji:'🍽️',color:'#10D9A8',builtIn:true,def:15},
+  {id:'investments',label:'Investments',emoji:'📈',color:'#F59E0B',builtIn:true,def:20},
+  {id:'emergency',label:'Emergency Fund',emoji:'🛡️',color:'#3B82F6',builtIn:true,def:10},
+  {id:'travel',label:'Travel & Transport',emoji:'✈️',color:'#EC4899',builtIn:true,def:8},
+  {id:'entertainment',label:'Entertainment',emoji:'🎉',color:'#A78BFA',builtIn:true,def:7},
+  {id:'health',label:'Health & Wellness',emoji:'💊',color:'#34D399',builtIn:true,def:5},
+  {id:'subscriptions',label:'Subscriptions',emoji:'📱',color:'#F97316',builtIn:true,def:3},
+  {id:'misc',label:'Miscellaneous',emoji:'📦',color:'#6B7280',builtIn:true,def:2},
+];
+const INV_TYPES=[
+  {id:'sip',label:'SIP / Mutual Funds',emoji:'📊',color:'#7C5CFC',defRate:12,defMode:'sip'},
+  {id:'stocks',label:'Stocks / Equity',emoji:'📈',color:'#10D9A8',defRate:15,defMode:'lump'},
+  {id:'fd',label:'Fixed Deposit',emoji:'🏦',color:'#F59E0B',defRate:7.5,defMode:'lump'},
+  {id:'gold',label:'Gold',emoji:'🥇',color:'#EAB308',defRate:8,defMode:'lump'},
+  {id:'ppf',label:'PPF / NPS',emoji:'🏛️',color:'#3B82F6',defRate:7.1,defMode:'lump'},
+  {id:'crypto',label:'Crypto',emoji:'₿',color:'#EC4899',defRate:25,defMode:'lump'},
+  {id:'other',label:'Other',emoji:'💼',color:'#6B7280',defRate:8,defMode:'lump'},
+];
+const SWATCHES=['#7C5CFC','#10D9A8','#F59E0B','#3B82F6','#EC4899','#A78BFA','#34D399','#F97316','#EF4444','#06B6D4','#8B5CF6','#6B7280'];
+const CARD_COLORS=['#3B82F6','#7C5CFC','#EC4899','#10D9A8','#F59E0B','#EF4444','#6B7280','#8B5CF6'];
+const LINE_COLS=['#7C5CFC','#10D9A8','#F59E0B','#3B82F6','#EC4899','#A78BFA','#34D399','#F97316'];
+// Categories that should NEVER be reduced to fund wants (non-negotiable)
+const FIXED_CATS=['rent','investments','emergency','health'];
+
+const INCOME_TYPES=[
+  {id:'salary',    label:'Salary',               emoji:'💼', color:'#7C5CFC'},
+  {id:'freelance', label:'Freelance / Consult.',  emoji:'💻', color:'#10D9A8'},
+  {id:'rental',    label:'Rental Income',         emoji:'🏠', color:'#F59E0B'},
+  {id:'dividend',  label:'Dividends',             emoji:'📊', color:'#3B82F6'},
+  {id:'interest',  label:'Interest Income',       emoji:'🏦', color:'#EC4899'},
+  {id:'bonus',     label:'Bonus / Incentive',     emoji:'🎯', color:'#A78BFA'},
+  {id:'refund',    label:'Refund / Cashback',     emoji:'↩️', color:'#34D399'},
+  {id:'business',  label:'Business Income',       emoji:'🏪', color:'#F97316'},
+  {id:'gift',      label:'Gift / Transfer Recv.', emoji:'🎁', color:'#EAB308'},
+  {id:'other',     label:'Other Income',          emoji:'💰', color:'#6B7280'},
+];
+
+const RECUR_FREQS=[
+  {id:'daily',    label:'Daily',      sub:'Every day'},
+  {id:'weekly',   label:'Weekly',     sub:'Once a week'},
+  {id:'monthly',  label:'Monthly',    sub:'Once a month'},
+  {id:'quarterly',label:'Quarterly',  sub:'Every 3 months'},
+  {id:'annual',   label:'Annual',     sub:'Once a year'},
+];
+const WEEK_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const NAV=[
+  {id:'dashboard',label:'Dashboard',icon:'home',section:null},
+  {id:'expenses',label:'Expenses',icon:'list',section:null},
+  {id:'income',label:'Income',icon:'income',section:null},
+  {id:'recurring',label:'Recurring',icon:'recurring',section:null},
+  {id:'cards',label:'Credit Cards',icon:'ccardnav',section:null},
+  {id:'wants',label:'Wants & Goals',icon:'wants',section:null},
+  {id:'investments',label:'Investments',icon:'trend',section:'Wealth'},
+  {id:'portfolio',label:'Portfolio & Returns',icon:'globe',section:null},
+  {id:'budget',label:'Budget',icon:'wallet',section:'Settings'},
+  {id:'backup',label:'Backup & Data',icon:'backup',section:null},
+  {id:'reports',label:'Reports',icon:'bar',section:null},
+];
+
+const ICONS={
+  home:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>`,
+  list:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+  income:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  recurring:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+  ccardnav:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/><line x1="5" y1="15" x2="9" y2="15"/><line x1="12" y1="15" x2="14" y2="15"/></svg>`,
+  trend:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>`,
+  globe:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  wallet:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 12V6H4a2 2 0 0 1-2-2h16v4"/><rect x="2" y="8" width="20" height="13" rx="2"/><circle cx="16" cy="14" r="2"/></svg>`,
+  bar:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg>`,
+  plus:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  trash:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>`,
+  x:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  warn:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  info:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  check:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>`,
+  edit:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  hist:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`,
+  wants:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`,
+  scissors:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`,
+  backup:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  download:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  upload:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
+};
+
+// ═══════════════════════════════════════
+// STATE & STORAGE
+// ═══════════════════════════════════════
+let S={
+  profile:{name:'',salary:0},
+  cats:[...DEFAULT_CATS.map(c=>({...c}))],
+  budget:Object.fromEntries(DEFAULT_CATS.map(c=>[c.id,c.def])),
+  expenses:[],
+  invs:[],
+  cards:[],
+  wants:[],
+  incomes:[],
+  recurs:[],
+  inflationRate:6,
+  lastExportDate:null,
+  view:'dashboard',
+  expFilter:{month:thisMonth(),cat:'all',payMode:'all'},
+};
+let charts={};
+
+function save(){
+  try{localStorage.setItem('moneta2',JSON.stringify({profile:S.profile,cats:S.cats,budget:S.budget,expenses:S.expenses,invs:S.invs,cards:S.cards,wants:S.wants,incomes:S.incomes,recurs:S.recurs,inflationRate:S.inflationRate,lastExportDate:S.lastExportDate}));}catch(e){}
+}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('moneta2')||localStorage.getItem('moneta')||'{}');
+    if(d.profile)S.profile=d.profile;
+    if(d.cats&&d.cats.length)S.cats=d.cats;
+    if(d.budget)S.budget=d.budget;
+    if(d.expenses)S.expenses=d.expenses;
+    if(d.invs)S.invs=d.invs;
+    if(d.cards)S.cards=d.cards;
+    if(d.wants)S.wants=d.wants;
+    if(d.incomes)S.incomes=d.incomes;
+    if(d.recurs)S.recurs=d.recurs;
+    if(d.inflationRate)S.inflationRate=d.inflationRate;
+    if(d.lastExportDate)S.lastExportDate=d.lastExportDate;
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function fmt(n){return'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});}
+function fmtPct(n){return(Number(n||0)>=0?'+':'')+Number(n||0).toFixed(1)+'%';}
+function today(){return new Date().toISOString().slice(0,10);}
+function thisMonth(){return today().slice(0,7);}
+function mKey(d){return(d||'').slice(0,7);}
+function mLabel(k){if(!k)return'';try{const[y,m]=k.split('-');return new Date(+y,+m-1).toLocaleString('en-IN',{month:'short',year:'numeric'});}catch(e){return k;}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function el(id){return document.getElementById(id);}
+function getCat(id){return S.cats.find(c=>c.id===id)||S.cats[S.cats.length-1]||{emoji:'📦',label:'Other',color:'#6B7280'};}
+function getInvType(id){return INV_TYPES.find(t=>t.id===id)||INV_TYPES[INV_TYPES.length-1];}
+function getCard(id){return S.cards.find(c=>c.id===id);}
+function getIncomeType(id){return INCOME_TYPES.find(t=>t.id===id)||INCOME_TYPES[INCOME_TYPES.length-1];}
+// Total income actually logged this month
+function thisMonthLoggedIncome(){return S.incomes.filter(i=>mKey(i.date)===thisMonth()).reduce((s,i)=>s+Number(i.amt),0);}
+// Use logged income if present; fall back to profile salary
+function effectiveIncome(){const l=thisMonthLoggedIncome();return l>0?l:Number(S.profile.salary)||0;}
+
+// ═══════════════════════════════════════
+// RECURRING TRANSACTION MATH
+// ═══════════════════════════════════════
+function recurNextDueDate(rec){
+  const n=new Date(),td=n.getDate(),yr=n.getFullYear(),mo=n.getMonth();
+  if(rec.freq==='monthly'){const dd=Number(rec.dueDay)||1;return td<=dd?new Date(yr,mo,dd):new Date(yr,mo+1,dd);}
+  if(rec.freq==='weekly'){const t=Number(rec.dueWeekDay)||1,c=n.getDay(),d=(t-c+7)%7||7;return new Date(n.getTime()+d*86400000);}
+  if(rec.freq==='daily'){return new Date(yr,mo,td+1);}
+  if(rec.freq==='quarterly'){const s=new Date(rec.startDate),ms=(yr-s.getFullYear())*12+mo-s.getMonth(),nq=Math.ceil((ms+0.01)/3)*3,nm=s.getMonth()+nq;return new Date(s.getFullYear()+Math.floor(nm/12),nm%12,s.getDate());}
+  if(rec.freq==='annual'){const s=new Date(rec.startDate),d=new Date(yr,s.getMonth(),s.getDate());if(d<n)d.setFullYear(yr+1);return d;}
+  return n;
+}
+function recurDaysUntilDue(rec){return Math.ceil((recurNextDueDate(rec)-new Date())/(1000*60*60*24));}
+function recurIsLoggedThisPeriod(rec){
+  if(!rec.lastLoggedDate)return false;
+  const l=new Date(rec.lastLoggedDate),n=new Date();
+  if(rec.freq==='monthly')return l.getFullYear()===n.getFullYear()&&l.getMonth()===n.getMonth();
+  if(rec.freq==='weekly')return(n-l)<7*86400000;
+  if(rec.freq==='daily')return l.toDateString()===n.toDateString();
+  if(rec.freq==='quarterly')return(n.getFullYear()-l.getFullYear())*12+n.getMonth()-l.getMonth()<3;
+  if(rec.freq==='annual')return l.getFullYear()===n.getFullYear();
+  return false;
+}
+function recurStatus(rec){
+  if(rec.status==='paused')return'paused';
+  if(recurIsLoggedThisPeriod(rec))return'logged';
+  const d=recurDaysUntilDue(rec);
+  if(d<0)return'overdue';
+  if(d===0)return'due_today';
+  if(d<=5)return'due_soon';
+  return'upcoming';
+}
+function recurFreqLabel(rec){
+  if(rec.freq==='monthly')return`${ordinal(rec.dueDay||1)} of every month`;
+  if(rec.freq==='weekly')return`Every ${WEEK_DAYS[rec.dueWeekDay||1]}`;
+  if(rec.freq==='daily')return'Every day';
+  if(rec.freq==='quarterly')return'Every 3 months';
+  if(rec.freq==='annual')return'Once a year';
+  return rec.freq;
+}
+function recurMonthlyAmt(rec){
+  const a=Number(rec.amt)||0;
+  if(rec.freq==='monthly')return a;
+  if(rec.freq==='weekly')return a*52/12;
+  if(rec.freq==='daily')return a*365/12;
+  if(rec.freq==='quarterly')return a/3;
+  if(rec.freq==='annual')return a/12;
+  return 0;
+}
+function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
+function ordinal(n){if(n%10===1&&n%100!==11)return n+'st';if(n%10===2&&n%100!==12)return n+'nd';if(n%10===3&&n%100!==13)return n+'rd';return n+'th';}
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+
+// ═══════════════════════════════════════
+// INVESTMENT MATH
+// ═══════════════════════════════════════
+function calcSIP(monthly,annualPct,months){if(months<=0)return 0;const r=annualPct/100/12;if(!r)return monthly*months;return monthly*((Math.pow(1+r,months)-1)/r)*(1+r);}
+function calcLump(p,annualPct,years){if(years<=0)return Number(p)||0;return(Number(p)||0)*Math.pow(1+annualPct/100,years);}
+function moElapsed(d){const s=new Date(d),n=new Date();return Math.max(0,(n.getFullYear()-s.getFullYear())*12+n.getMonth()-s.getMonth());}
+function invCurrentValue(inv){const rate=Number(inv.rate)||0,amt=Number(inv.amt)||0,mo=moElapsed(inv.date);return inv.mode==='sip'?calcSIP(amt,rate,Math.max(1,mo)):calcLump(amt,rate,mo/12);}
+function invTotalInvested(inv){const mo=Math.max(1,moElapsed(inv.date));return inv.mode==='sip'?Number(inv.amt)*mo:Number(inv.amt);}
+function invProjectedAt(inv,addYrs){const rate=Number(inv.rate)||0,amt=Number(inv.amt)||0,mo=moElapsed(inv.date);return inv.mode==='sip'?calcSIP(amt,rate,mo+addYrs*12):calcLump(amt,rate,mo/12+addYrs);}
+function invGainPct(inv){const cur=invCurrentValue(inv),inv0=invTotalInvested(inv);return inv0>0?(cur-inv0)/inv0*100:0;}
+
+// Every SIP active this month + lump sums made this month = total investment outflow
+function thisMonthInvOutflow(){
+  const key=thisMonth();
+  return S.invs.reduce((s,inv)=>{
+    if(inv.mode==='sip'&&mKey(inv.date)<=key)return s+Number(inv.amt);
+    if(inv.mode!=='sip'&&mKey(inv.date)===key)return s+Number(inv.amt);
+    return s;
+  },0);
+}
+
+// ═══════════════════════════════════════
+// WANTS & GOALS MATH
+// ═══════════════════════════════════════
+function wantTotalSaved(w){return(w.contributions||[]).reduce((s,c)=>s+Number(c.amount),0);}
+function wantRemaining(w){return Math.max(0,Number(w.targetAmount||0)-wantTotalSaved(w));}
+function wantProgress(w){const t=Number(w.targetAmount)||1;return Math.min(100,wantTotalSaved(w)/t*100);}
+function wantMonthsLeft(w){
+  if(w.targetDate){const d=new Date(w.targetDate),n=new Date();return Math.max(1,Math.ceil((d-n)/(1000*60*60*24*30.44)));}
+  return Math.max(1,Number(w.monthsDuration)||6);
+}
+function wantMonthlyNeeded(w){
+  const rem=wantRemaining(w);
+  return rem<=0?0:Math.ceil(rem/wantMonthsLeft(w));
+}
+
+// Smart saving plan: given total monthly amount needed, suggest cuts from FLEXIBLE categories only
+function savingSuggestions(monthlyNeeded){
+  if(monthlyNeeded<=0)return{suggestions:[],canCover:true,shortfall:0};
+  const sal=Number(S.profile.salary)||0;
+  const flex=S.cats.filter(c=>!FIXED_CATS.includes(c.id));
+  const thisMoExp=S.expenses.filter(e=>mKey(e.date)===thisMonth());
+  const options=flex.map(c=>{
+    const budget=(S.budget[c.id]||0)/100*sal;
+    const spent=thisMoExp.filter(e=>e.cat===c.id).reduce((s,e)=>s+Number(e.amt),0);
+    const maxCut=budget*0.45; // suggest cutting up to 45% of each category
+    return{cat:c,budget,spent,maxCut};
+  }).filter(o=>o.budget>0).sort((a,b)=>b.budget-a.budget);
+  
+  const totalMaxCut=options.reduce((s,o)=>s+o.maxCut,0);
+  const suggestions=[];
+  let remaining=monthlyNeeded;
+  
+  for(const opt of options){
+    if(remaining<=0)break;
+    // Cut proportional to category size, up to maxCut
+    const proportion=opt.budget/(options.reduce((s,o)=>s+o.budget,0)||1);
+    const cut=Math.min(remaining,Math.max(opt.budget*0.1,opt.maxCut));
+    const actualCut=Math.min(cut,remaining);
+    if(actualCut>=50){
+      suggestions.push({cat:opt.cat,budget:opt.budget,spent:opt.spent,suggestedCut:Math.ceil(actualCut),newBudget:Math.max(0,Math.floor(opt.budget-actualCut))});
+      remaining-=actualCut;
+    }
+  }
+  return{suggestions,canCover:remaining<=0,shortfall:Math.max(0,remaining)};
+}
+
+// ═══════════════════════════════════════
+// CREDIT CARD MATH
+// ═══════════════════════════════════════
+function cardOutstanding(card){
+  const charges=S.expenses.filter(e=>e.cardId===card.id).reduce((s,e)=>s+Number(e.amt),0);
+  const paid=(card.payments||[]).reduce((s,p)=>s+Number(p.amount),0);
+  return Math.max(0,(Number(card.initialBalance)||0)+charges-paid);
+}
+function cardTotalCharged(card){
+  return (Number(card.initialBalance)||0)+S.expenses.filter(e=>e.cardId===card.id).reduce((s,e)=>s+Number(e.amt),0);
+}
+function cardTotalPaid(card){
+  return (card.payments||[]).reduce((s,p)=>s+Number(p.amount),0);
+}
+function cardUtilPct(card){
+  const lim=Number(card.limit)||1;
+  return clamp(cardOutstanding(card)/lim*100,0,100);
+}
+function cardNextDueDate(card){
+  const now=new Date(),dd=Number(card.dueDay)||25;
+  const thisMonthDue=new Date(now.getFullYear(),now.getMonth(),dd);
+  return thisMonthDue>=now?thisMonthDue:new Date(now.getFullYear(),now.getMonth()+1,dd);
+}
+function cardDaysUntilDue(card){
+  const diff=cardNextDueDate(card)-new Date();
+  return Math.ceil(diff/(1000*60*60*24));
+}
+function cardStatus(card){
+  const out=cardOutstanding(card),days=cardDaysUntilDue(card);
+  if(out<=0)return'clear';
+  if(days<0)return'overdue';
+  if(days<=5)return'urgent';
+  if(days<=10)return'soon';
+  return'ok';
+}
+function cardMinDue(card){
+  const out=cardOutstanding(card);
+  return Math.max(200,out*(Number(card.minDuePct)||5)/100);
+}
+function cardInterestDue(card){
+  const out=cardOutstanding(card),days=Math.max(0,-cardDaysUntilDue(card));
+  if(days===0||out<=0)return 0;
+  const dailyRate=(Number(card.interestRate)||3.5)/100/30;
+  return out*dailyRate*days;
+}
+function cardCurrentCycleCharges(card){
+  const now=new Date(),bd=Number(card.billingDay)||5;
+  let start;
+  if(now.getDate()>=bd)start=new Date(now.getFullYear(),now.getMonth(),bd);
+  else start=new Date(now.getFullYear(),now.getMonth()-1,bd);
+  const startStr=start.toISOString().slice(0,10);
+  return S.expenses.filter(e=>e.cardId===card.id&&e.date>=startStr).reduce((s,e)=>s+Number(e.amt),0);
+}
+function cardPaymentThisCycle(card){
+  const now=new Date(),bd=Number(card.billingDay)||5;
+  let start;
+  if(now.getDate()>=bd)start=new Date(now.getFullYear(),now.getMonth(),bd);
+  else start=new Date(now.getFullYear(),now.getMonth()-1,bd);
+  const startStr=start.toISOString().slice(0,10);
+  return(card.payments||[]).filter(p=>p.date>=startStr).reduce((s,p)=>s+Number(p.amount),0);
+}
+
+// ═══════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════
+function renderSidebar(){
+  const p=S.profile;
+  const overdueCards=S.cards.filter(c=>cardStatus(c)==='overdue'||cardStatus(c)==='urgent');
+  let navHTML='';
+  let lastSection=null;
+  NAV.forEach(n=>{
+    if(n.section&&n.section!==lastSection){navHTML+=`<div class="nb-section">${n.section}</div>`;lastSection=n.section;}
+    const dot=n.id==='cards'&&overdueCards.length?` <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:auto">${overdueCards.length}</span>`:'';
+    navHTML+=`<button class="nb ${S.view===n.id?'active':''}" onclick="navigate('${n.id}')">${ICONS[n.icon]}<span>${n.label}${dot}</span></button>`;
+  });
+  el('sb').innerHTML=`
+    <div class="logo"><div class="logo-icon">₹</div><span class="logo-name">Moneta</span></div>
+    <div class="logo-sub">Personal Finance</div>
+    <nav>${navHTML}</nav>
+    <button class="sb-prof" onclick="openSetup()">
+      <div class="sb-av">${p.name?p.name[0].toUpperCase():'?'}</div>
+      <div><div class="sb-pname">${p.name||'Setup Profile'}</div><div class="sb-psal">${p.salary?fmt(p.salary)+'/mo':'Not set'}</div></div>
+    </button>`;
+}
+
+function navigate(view){
+  S.view=view;
+  destroyCharts();
+  renderSidebar();
+  ({dashboard:renderDashboard,expenses:renderExpenses,income:renderIncome,recurring:renderRecurring,cards:renderCards,wants:renderWants,investments:renderInvestments,portfolio:renderPortfolio,budget:renderBudget,backup:renderBackup,reports:renderReports}[view]||renderDashboard)();
+}
+function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
+
+// ═══════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════
+function renderDashboard(){
+  const sal=Number(S.profile.salary)||0;
+  const thisMoExp=S.expenses.filter(e=>mKey(e.date)===thisMonth());
+  const spent=thisMoExp.reduce((s,e)=>s+Number(e.amt),0);
+  const invOut=thisMonthInvOutflow();      // SIP monthly amounts + this month's lump sums
+  const totalOut=spent+invOut;             // true total money going out
+  const loggedIncome=thisMonthLoggedIncome();
+  const actualIncome=loggedIncome>0?loggedIncome:sal; // real income or salary baseline
+  const rem=actualIncome-totalOut;
+  const totalInv=S.invs.reduce((s,i)=>s+invTotalInvested(i),0);
+  const curPort=S.invs.reduce((s,i)=>s+invCurrentValue(i),0);
+  const savRate=(S.budget.investments||0)+(S.budget.emergency||0);
+  const score=Math.min(100,Math.round((savRate/30*40)+((actualIncome>0&&totalOut<=actualIncome)?(1-totalOut/actualIncome)*40:0)+(S.profile.name&&sal>0?20:0)));
+  const scCol=score>=70?'var(--green)':score>=40?'var(--amber)':'var(--red)';
+  const scLbl=score>=70?'Excellent':score>=40?'Good':'Needs Work';
+  const spentByCat={};
+  thisMoExp.forEach(e=>{spentByCat[e.cat]=(spentByCat[e.cat]||0)+Number(e.amt);});
+  if(invOut>0)spentByCat['investments']=(spentByCat['investments']||0)+invOut;
+  const totalCardOut=S.cards.reduce((s,c)=>s+cardOutstanding(c),0);
+  const overdueCards=S.cards.filter(c=>cardStatus(c)==='overdue'||cardStatus(c)==='urgent');
+  const spentPct=actualIncome>0?clamp(spent/actualIncome*100,0,100):0;
+  const invPct=actualIncome>0?clamp(invOut/actualIncome*100,0,100):0;
+  const remPct=actualIncome>0?clamp(rem/actualIncome*100,0,100):0;
+  const sipCount=S.invs.filter(i=>i.mode==='sip'&&mKey(i.date)<=thisMonth()).length;
+  const thisMoIncEntries=S.incomes.filter(i=>mKey(i.date)===thisMonth());
+  const extraIncome=loggedIncome>sal?loggedIncome-sal:0;
+  // Recurring bills awareness
+  const activeRecurs=S.recurs.filter(r=>r.status!=='paused');
+  const overdueRec=activeRecurs.filter(r=>recurStatus(r)==='overdue');
+  const dueTodayRec=activeRecurs.filter(r=>recurStatus(r)==='due_today');
+  const dueSoonRec=activeRecurs.filter(r=>recurStatus(r)==='due_soon');
+  const alertRec=[...overdueRec,...dueTodayRec,...dueSoonRec];
+  const monthlyObligations=activeRecurs.reduce((s,r)=>s+recurMonthlyAmt(r),0);
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>${greet()}, ${S.profile.name||'there'} 👋</h1><p>${mLabel(thisMonth())} · Track, save, grow.</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="openAddExpense()">${ICONS.plus} Add Expense</button>
+      <button class="btn-s" onclick="openAddInvestment()">${ICONS.trend} Log Investment</button>
+    </div>
+  </div>
+
+  ${overdueCards.length?`<div class="alert ae">${ICONS.warn} <span><strong>${overdueCards.map(c=>c.name).join(', ')}</strong> — payment overdue! Interest is accruing. <span style="cursor:pointer;text-decoration:underline" onclick="navigate('cards')">View Cards →</span></span></div>`:''}
+  ${overdueRec.length?`<div class="alert ae">${ICONS.warn} <span><strong>${overdueRec.length} recurring bill${overdueRec.length!==1?'s':''} overdue</strong> — ${overdueRec.map(r=>r.name).join(', ')}. <span style="cursor:pointer;text-decoration:underline" onclick="navigate('recurring')">Log Now →</span></span></div>`:''}
+  ${dueTodayRec.length&&!overdueRec.length?`<div class="alert aw">${ICONS.warn} <span><strong>${dueTodayRec.map(r=>r.name).join(', ')}</strong> — due today. <span style="cursor:pointer;text-decoration:underline" onclick="navigate('recurring')">Log →</span></span></div>`:''}
+  ${(()=>{const hasData=S.expenses.length+S.invs.length>3;if(!hasData)return'';const days=S.lastExportDate?Math.floor((new Date()-new Date(S.lastExportDate))/(1000*60*60*24)):999;if(days<14)return'';return`<div class="alert aw">${ICONS.warn} <span>${days>900?'Your data has <strong>never been backed up</strong>':days+' days since last backup'}. If you clear your browser or switch devices, all your data will be lost. <span style="cursor:pointer;text-decoration:underline;font-weight:600" onclick="navigate('backup')">Backup now →</span></span></div>`;})()}
+
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px">
+    <div class="stat-card" onclick="navigate('income')" style="cursor:pointer;border-color:${loggedIncome>0?'var(--green)':'var(--border)'}44">
+      <div class="stat-lbl">Income This Month</div>
+      <div class="stat-val" style="color:var(--green)">${fmt(actualIncome)}</div>
+      <div class="stat-sub">${loggedIncome>0?thisMoIncEntries.length+' source'+(thisMoIncEntries.length!==1?'s':'')+' logged'+(extraIncome>0?' · +'+fmt(extraIncome)+' extra':''):'Salary baseline — log income →'}</div>
+    </div>
+    <div class="stat-card"><div class="stat-lbl">Expenses</div><div class="stat-val c-r">${fmt(spent)}</div><div class="stat-sub">${actualIncome>0?Math.round(spent/actualIncome*100):0}% of income</div></div>
+    <div class="stat-card"><div class="stat-lbl">Invested This Month</div><div class="stat-val c-a">${fmt(invOut)}</div><div class="stat-sub">${sipCount} SIP${sipCount!==1?'s':''} active · ${actualIncome>0?Math.round(invOut/actualIncome*100):0}% of income</div></div>
+    <div class="stat-card"><div class="stat-lbl">Net Remaining</div><div class="stat-val" style="color:${rem>=0?'var(--green)':'var(--red)'}">${fmt(Math.max(0,rem))}</div><div class="stat-sub">${rem>=0?'After expenses + investments':'Overspent ⚠️'}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Card Outstanding</div><div class="stat-val ${totalCardOut>0?'c-r':'c-g'}">${fmt(totalCardOut)}</div><div class="stat-sub" style="cursor:pointer;color:var(--accent)" onclick="navigate('cards')">${S.cards.length} card${S.cards.length!==1?'s':''} — view →</div></div>
+  </div>
+
+  <!-- Money Flow Bar: every rupee accounted for -->
+  <div class="card" style="margin-bottom:14px;padding:14px 20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span class="sec" style="margin-bottom:0">Monthly Money Flow</span>
+      <span style="font-size:11px;color:var(--muted)">Total out: <strong style="color:${totalOut>actualIncome?'var(--red)':'var(--text)'}">${fmt(totalOut)}</strong> of ${fmt(actualIncome)}${loggedIncome===0?` <span style="color:var(--subtle)">(salary baseline)</span>`:''}</span>
+    </div>
+    <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;gap:1px;background:var(--surf2);margin-bottom:10px">
+      ${spent>0?`<div style="width:${spentPct}%;background:var(--red);min-width:${spent>0?2:0}px;transition:width 0.5s" title="Expenses ${fmt(spent)}"></div>`:''}
+      ${invOut>0?`<div style="width:${invPct}%;background:var(--amber);min-width:${invOut>0?2:0}px;transition:width 0.5s" title="Investments ${fmt(invOut)}"></div>`:''}
+      ${rem>0?`<div style="width:${remPct}%;background:var(--green);flex:${spentPct+invPct<99?1:0};transition:width 0.5s" title="Free ${fmt(rem)}"></div>`:''}
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:2px;background:var(--red);display:inline-block"></span><span class="c-m">Expenses</span> <strong>${fmt(spent)}</strong> <span class="c-m">(${Math.round(spentPct)}%)</span></span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:2px;background:var(--amber);display:inline-block"></span><span class="c-m">Investments</span> <strong>${fmt(invOut)}</strong> <span class="c-m">(${Math.round(invPct)}%)</span></span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:2px;background:var(--green);display:inline-block"></span><span class="c-m">Free to use</span> <strong style="color:var(--green)">${fmt(Math.max(0,rem))}</strong> <span class="c-m">(${Math.round(remPct)}%)</span></span>
+      ${totalCardOut>0?`<span style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:2px;background:var(--accent);display:inline-block"></span><span class="c-m">Card dues</span> <strong class="c-acc">${fmt(totalCardOut)}</strong></span>`:''}
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="card">
+      <div class="sec">Budget Allocation</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <canvas id="ch-alloc" width="120" height="120" style="flex-shrink:0"></canvas>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+          ${S.cats.slice(0,6).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px"><span style="display:flex;align-items:center;gap:5px;color:#B0B0C8"><span style="width:7px;height:7px;border-radius:2px;background:${c.color};display:inline-block"></span>${c.label.split(' ')[0]}</span><span class="mono" style="font-weight:600;font-size:11px">${S.budget[c.id]||0}%</span></div>`).join('')}
+          ${S.cats.length>6?`<div style="font-size:10px;color:var(--subtle)">+${S.cats.length-6} more</div>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec">Expenses Breakdown</div>
+      ${Object.keys(spentByCat).filter(k=>k!=='investments'||!invOut).length||thisMoExp.length?`<div style="display:flex;align-items:center;gap:12px">
+        <canvas id="ch-spend" width="120" height="120" style="flex-shrink:0"></canvas>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+          ${S.cats.filter(c=>spentByCat[c.id]&&c.id!=='investments').slice(0,5).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px"><span style="display:flex;align-items:center;gap:5px;color:#B0B0C8"><span style="width:7px;height:7px;border-radius:2px;background:${c.color};display:inline-block"></span>${c.label.split(' ')[0]}</span><span class="mono" style="font-weight:600;font-size:11px">${fmt(spentByCat[c.id])}</span></div>`).join('')}
+          ${invOut>0?`<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px"><span style="display:flex;align-items:center;gap:5px;color:#B0B0C8"><span style="width:7px;height:7px;border-radius:2px;background:#F59E0B;display:inline-block"></span>Investments</span><span class="mono" style="font-weight:600;font-size:11px;color:var(--amber)">${fmt(invOut)}</span></div>`:''}
+        </div>
+      </div>`:`<div class="empty"><div class="ei">💸</div><p>No expenses this month</p></div>`}
+    </div>
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="sec">Financial Health</div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <svg width="160" height="92" viewBox="0 0 160 92">
+          <path d="M15 80 A65 65 0 0 1 145 80" fill="none" stroke="#1C1C27" stroke-width="11" stroke-linecap="round"/>
+          <path d="M15 80 A65 65 0 0 1 145 80" fill="none" stroke="${scCol}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${Math.PI*65}" stroke-dashoffset="${Math.PI*65*(1-score/100)}"/>
+          <text x="80" y="74" text-anchor="middle" fill="#F0F0F8" font-family="JetBrains Mono" font-size="26" font-weight="600">${score}</text>
+        </svg>
+        <div style="color:${scCol};font-size:13px;font-weight:700;margin-top:-6px">${scLbl}</div>
+      </div>
+      <hr class="divider">
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${[['Savings rate',savRate+'%'],['Total outflow',(sal>0?Math.round(totalOut/sal*100):0)+'%'],['Portfolio gain',fmtPct(totalInv>0?(curPort-totalInv)/totalInv*100:0)]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;font-size:11px"><span class="c-m">${l}</span><span class="mono" style="font-weight:600">${v}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="sec">Budget vs Actual</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        ${S.cats.map(c=>{const alloc=(S.budget[c.id]||0)/100*sal,sp=spentByCat[c.id]||0,pct=alloc>0?Math.min(100,sp/alloc*100):0,over=sp>alloc;return`<div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#B0B0C8">${c.emoji} ${c.label}</span><span class="mono" style="color:${over?'var(--red)':'var(--text)'};font-size:11px">${fmt(sp)} / ${fmt(alloc)}</span></div><div class="progress"><div class="pbar" style="width:${pct}%;background:${over?'var(--red)':c.color}"></div></div></div>`;}).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec">Recent Expenses</div>
+      ${thisMoExp.length?`<div>${thisMoExp.slice(0,7).map((e,i)=>{const cat=getCat(e.cat),card=e.cardId?getCard(e.cardId):null;return`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;${i<Math.min(thisMoExp.length,7)-1?'border-bottom:1px solid var(--border)':''}"><div style="width:34px;height:34px;background:${cat.color}22;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${cat.emoji}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.desc||cat.label}</div><div style="font-size:10px;color:var(--muted);display:flex;gap:6px;align-items:center">${e.date}${card?`<span class="badge" style="background:${card.color}22;color:${card.color};font-size:10px">💳 ${card.name}</span>`:''}</div></div><span class="mono c-r" style="font-size:13px;font-weight:600;white-space:nowrap">-${fmt(e.amt)}</span></div>`;}).join('')}</div>`:`<div class="empty"><div class="ei">🧾</div><p>No expenses this month yet</p></div>`}
+    </div>
+  </div>
+
+  ${alertRec.length?`
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="sec" style="margin-bottom:0">🔄 Recurring Bills — Action Required</div>
+      <div style="display:flex;gap:8px">
+        ${alertRec.length>1?`<button class="btn-g" onclick="logAllDue()" style="padding:6px 12px;font-size:12px">Log All (${alertRec.length})</button>`:''}
+        <button class="btn-s" onclick="navigate('recurring')" style="padding:6px 12px;font-size:12px">Manage</button>
+      </div>
+    </div>
+    <div>${alertRec.map((r,i)=>{
+      const cat=getCat(r.cat),st=recurStatus(r),days=recurDaysUntilDue(r);
+      const stCol=st==='overdue'?'var(--red)':st==='due_today'?'var(--amber)':'var(--muted)';
+      const stTxt=st==='overdue'?Math.abs(days)+'d overdue ⚠️':st==='due_today'?'Due today':'Due in '+days+'d';
+      return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;${i<alertRec.length-1?'border-bottom:1px solid var(--border)':''}">
+        <div style="width:34px;height:34px;background:${cat.color}22;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${cat.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500">${r.name}</div>
+          <div style="font-size:11px;color:${stCol};margin-top:1px">${stTxt} · ${recurFreqLabel(r)}</div>
+        </div>
+        <span class="mono" style="font-weight:700;font-size:13px;white-space:nowrap">${fmt(r.amt)}</span>
+        <button class="btn" onclick="logRecurring('${r.id}')" style="padding:6px 12px;font-size:12px;flex-shrink:0">Log</button>
+      </div>`;
+    }).join('')}</div>
+    ${monthlyObligations>0?`<div style="border-top:1px solid var(--border);padding-top:10px;margin-top:6px;display:flex;justify-content:space-between;font-size:12px"><span class="c-m">Total monthly obligations</span><span class="mono" style="font-weight:700">${fmt(monthlyObligations)}/mo</span></div>`:''}
+  </div>`:''}`;
+
+  const allocData=S.cats.map(c=>({v:S.budget[c.id]||0,c:c.color})).filter(d=>d.v>0);
+  if(allocData.length)charts.alloc=new Chart(el('ch-alloc'),{type:'doughnut',data:{datasets:[{data:allocData.map(d=>d.v),backgroundColor:allocData.map(d=>d.c),borderWidth:0}]},options:{cutout:'65%',plugins:{legend:{display:false}},animation:{duration:500}}});
+  // Spending donut: expense categories + investments outflow as a separate segment
+  const spendDataRaw=S.cats.filter(c=>spentByCat[c.id]&&c.id!=='investments').map(c=>({v:spentByCat[c.id],c:c.color}));
+  if(invOut>0)spendDataRaw.push({v:invOut,c:'#F59E0B'});
+  if(spendDataRaw.length)charts.spend=new Chart(el('ch-spend'),{type:'doughnut',data:{datasets:[{data:spendDataRaw.map(d=>d.v),backgroundColor:spendDataRaw.map(d=>d.c),borderWidth:0}]},options:{cutout:'65%',plugins:{legend:{display:false}},animation:{duration:500}}});
+}
+
+// ═══════════════════════════════════════
+// EXPENSES
+// ═══════════════════════════════════════
+function renderExpenses(){
+  const fMo=S.expFilter.month,fCat=S.expFilter.cat,fPay=S.expFilter.payMode;
+  const months=[...new Set(S.expenses.map(e=>mKey(e.date)))];
+  if(!months.includes(thisMonth()))months.unshift(thisMonth());
+  months.sort().reverse();
+  const filtered=S.expenses.filter(e=>
+    (fMo==='all'||mKey(e.date)===fMo)&&
+    (fCat==='all'||e.cat===fCat)&&
+    (fPay==='all'||(fPay==='card'?!!e.cardId:!e.cardId))
+  );
+  const total=filtered.reduce((s,e)=>s+Number(e.amt),0);
+  const cardTotal=filtered.filter(e=>e.cardId).reduce((s,e)=>s+Number(e.amt),0);
+  const sal=Number(S.profile.salary)||0;
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Expenses</h1><p>Track every rupee — cash, UPI, and credit card</p></div>
+    <button class="btn" onclick="openAddExpense()">${ICONS.plus} Add Expense</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+    <select style="width:auto" onchange="S.expFilter.month=this.value;renderExpenses()">
+      <option value="all" ${fMo==='all'?'selected':''}>All months</option>
+      ${months.map(m=>`<option value="${m}" ${fMo===m?'selected':''}>${mLabel(m)}</option>`).join('')}
+    </select>
+    <select style="width:auto" onchange="S.expFilter.cat=this.value;renderExpenses()">
+      <option value="all" ${fCat==='all'?'selected':''}>All categories</option>
+      ${S.cats.map(c=>`<option value="${c.id}" ${fCat===c.id?'selected':''}>${c.emoji} ${c.label}</option>`).join('')}
+    </select>
+    <select style="width:auto" onchange="S.expFilter.payMode=this.value;renderExpenses()">
+      <option value="all" ${fPay==='all'?'selected':''}>All payment modes</option>
+      <option value="cash" ${fPay==='cash'?'selected':''}>💵 Cash / UPI</option>
+      <option value="card" ${fPay==='card'?'selected':''}>💳 Credit Card</option>
+    </select>
+    <div style="flex:1"></div>
+    <div class="card" style="padding:8px 14px;display:inline-flex;gap:14px;align-items:center;border-radius:10px">
+      <span style="font-size:12px;color:var(--muted)">Total:</span>
+      <span class="mono c-r" style="font-weight:700">${fmt(total)}</span>
+      ${cardTotal>0?`<span style="font-size:11px;color:var(--muted)">💳 ${fmt(cardTotal)}</span>`:''}
+      ${sal>0?`<span style="font-size:11px;color:var(--subtle)">${Math.round(total/sal*100)}% of salary</span>`:''}
+    </div>
+  </div>
+  <div class="card">
+    ${filtered.length?`<div>${filtered.map((e,i)=>{
+      const cat=getCat(e.cat),card=e.cardId?getCard(e.cardId):null;
+      return`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;${i<filtered.length-1?'border-bottom:1px solid var(--border)':''}">
+        <div style="width:38px;height:38px;background:${cat.color}22;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${cat.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.desc||cat.label}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+            <span>${e.date}</span>
+            <span class="badge" style="background:${cat.color}22;color:${cat.color}">${cat.label}</span>
+            ${card?`<span class="badge" style="background:${card.color}22;color:${card.color}">💳 ${card.name}</span>`:`<span class="badge" style="background:#6B728022;color:#9BA3B2">💵 Cash/UPI</span>`}
+          </div>
+        </div>
+        <span class="mono c-r" style="font-weight:700;font-size:14px;white-space:nowrap">-${fmt(e.amt)}</span>
+        <button class="btn-del" onclick="delExpense('${e.id}')">${ICONS.trash}</button>
+      </div>`;
+    }).join('')}</div>`:`<div class="empty"><div class="ei">🧾</div><p>No expenses found</p></div>`}
+  </div>`;
+}
+function delExpense(id){S.expenses=S.expenses.filter(e=>e.id!==id);save();renderExpenses();}
+
+// ═══════════════════════════════════════
+// INCOME
+// ═══════════════════════════════════════
+function renderIncome(){
+  const now=new Date();
+  const fMo=S._incFilter||thisMonth();
+  const months=[...new Set(S.incomes.map(i=>mKey(i.date)))];
+  if(!months.includes(thisMonth()))months.unshift(thisMonth());
+  months.sort().reverse();
+
+  const filtered=S.incomes.filter(i=>fMo==='all'||mKey(i.date)===fMo);
+  const sal=Number(S.profile.salary)||0;
+  const thisMoInc=S.incomes.filter(i=>mKey(i.date)===thisMonth()).reduce((s,i)=>s+Number(i.amt),0);
+
+  // Last month
+  const lmD=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const lastMoKey=`${lmD.getFullYear()}-${String(lmD.getMonth()+1).padStart(2,'0')}`;
+  const lastMoInc=S.incomes.filter(i=>mKey(i.date)===lastMoKey).reduce((s,i)=>s+Number(i.amt),0);
+  const momChg=lastMoInc>0?((thisMoInc-lastMoInc)/lastMoInc*100):null;
+
+  // YTD & avg
+  const yr=now.getFullYear().toString();
+  const ytd=S.incomes.filter(i=>i.date.startsWith(yr)).reduce((s,i)=>s+Number(i.amt),0);
+  const last3=[0,1,2].map(i=>{const d=new Date(now.getFullYear(),now.getMonth()-i,1),k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;return S.incomes.filter(e=>mKey(e.date)===k).reduce((s,e)=>s+Number(e.amt),0);}).filter(v=>v>0);
+  const avgInc=last3.length?Math.round(last3.reduce((s,v)=>s+v,0)/last3.length):sal;
+
+  // This month savings rate
+  const spent=S.expenses.filter(e=>mKey(e.date)===thisMonth()).reduce((s,e)=>s+Number(e.amt),0);
+  const invOut=thisMonthInvOutflow();
+  const effectiveInc=thisMoInc>0?thisMoInc:sal;
+  const totalOut=spent+invOut;
+  const savings=effectiveInc-totalOut;
+  const savingsRate=effectiveInc>0?Math.round(savings/effectiveInc*100):0;
+
+  // By type breakdown
+  const byType={};
+  S.incomes.forEach(i=>{byType[i.type]=(byType[i.type]||0)+Number(i.amt);});
+
+  // 6-month income vs outflow for chart
+  const last6=Array.from({length:6},(_,i)=>{
+    const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const inc=S.incomes.filter(e=>mKey(e.date)===k).reduce((s,e)=>s+Number(e.amt),0)||(k===thisMonth()?sal:sal);
+    const out=S.expenses.filter(e=>mKey(e.date)===k).reduce((s,e)=>s+Number(e.amt),0);
+    return{label:d.toLocaleString('en-IN',{month:'short'}),inc,out,saved:Math.max(0,inc-out),key:k};
+  });
+
+  // Recurring income
+  const recurring=S.incomes.filter(i=>i.isRecurring);
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Income</h1><p>Track every rupee coming in — salary, freelance, rentals, dividends & more</p></div>
+    <button class="btn" onclick="openAddIncome()">${ICONS.plus} Add Income</button>
+  </div>
+
+  ${!S.incomes.length?`<div class="alert aw" style="margin-bottom:14px">${ICONS.info} <span>No income logged yet. Your salary (${fmt(sal)}) is used as a baseline. Log actual income to get accurate savings rate and free-money calculations.</span></div>`:''}
+
+  <!-- Stats -->
+  <div class="grid4" style="margin-bottom:14px">
+    <div class="stat-card">
+      <div class="stat-lbl">This Month</div>
+      <div class="stat-val" style="color:var(--green)">${fmt(thisMoInc||sal)}</div>
+      <div class="stat-sub">${thisMoInc>0?S.incomes.filter(i=>mKey(i.date)===thisMonth()).length+' source(s) logged':'Salary baseline'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">vs Last Month</div>
+      <div class="stat-val" style="color:${momChg===null?'var(--muted)':momChg>=0?'var(--green)':'var(--red)'}">${momChg===null?'—':fmtPct(momChg)}</div>
+      <div class="stat-sub">${lastMoInc>0?fmt(lastMoInc)+' last month':'No last month data'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">YTD Total</div>
+      <div class="stat-val c-acc">${fmt(ytd||sal*now.getMonth())}</div>
+      <div class="stat-sub">${now.getFullYear()} so far</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Savings Rate</div>
+      <div class="stat-val" style="color:${savingsRate>=20?'var(--green)':savingsRate>=10?'var(--amber)':'var(--red)'}">${savingsRate}%</div>
+      <div class="stat-sub">${fmt(Math.max(0,savings))} saved · ${fmt(totalOut)} out</div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:14px">
+    <!-- Income by source -->
+    <div class="card">
+      <div class="sec">Income Sources (All Time)</div>
+      ${S.incomes.length?`
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <canvas id="ch-inc" width="130" height="130" style="flex-shrink:0"></canvas>
+        <div style="flex:1;display:flex;flex-direction:column;gap:7px;padding-top:4px">
+          ${INCOME_TYPES.filter(t=>byType[t.id]).map(t=>`
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#B0B0C8">
+              <span style="width:8px;height:8px;border-radius:2px;background:${t.color};display:inline-block"></span>${t.emoji} ${t.label.split('/')[0].trim()}
+            </span>
+            <div style="text-align:right">
+              <div class="mono" style="font-size:12px;font-weight:600">${fmt(byType[t.id])}</div>
+              <div style="font-size:10px;color:var(--muted)">${Math.round(byType[t.id]/S.incomes.reduce((s,i)=>s+Number(i.amt),0)*100)}%</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <hr class="divider">
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:0 2px">
+        <span class="c-m">Total recorded income</span>
+        <span class="mono" style="font-weight:700;color:var(--green)">${fmt(S.incomes.reduce((s,i)=>s+Number(i.amt),0))}</span>
+      </div>`:`<div class="empty"><div class="ei">💰</div><p>No income logged yet</p></div>`}
+    </div>
+
+    <!-- Income vs Outflow bar chart -->
+    <div class="card">
+      <div class="sec">Income vs Outflow — 6 Months</div>
+      <div style="position:relative;height:200px"><canvas id="ch-inc-vs"></canvas></div>
+      <div style="display:flex;gap:14px;margin-top:8px">
+        ${[['var(--green)','Income'],['var(--red)','Expenses'],['#7C5CFC','Saved']].map(([c,l])=>`<span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block"></span>${l}</span>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- Income list -->
+  <div class="card" style="margin-bottom:${recurring.length?'14':'0'}px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="sec" style="margin-bottom:0">Income Entries</div>
+      <select style="width:auto" onchange="S._incFilter=this.value;renderIncome()">
+        <option value="all" ${fMo==='all'?'selected':''}>All time</option>
+        ${months.map(m=>`<option value="${m}" ${fMo===m?'selected':''}>${mLabel(m)}</option>`).join('')}
+      </select>
+    </div>
+    ${filtered.length?`<div>${filtered.map((inc,i)=>{
+      const t=getIncomeType(inc.type);
+      return`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;${i<filtered.length-1?'border-bottom:1px solid var(--border)':''}">
+        <div style="width:38px;height:38px;background:${t.color}22;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${t.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${inc.name||t.label}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:8px;align-items:center">
+            <span>${inc.date}</span>
+            <span class="badge" style="background:${t.color}22;color:${t.color}">${t.label}</span>
+            ${inc.isRecurring?`<span class="badge" style="background:var(--green)22;color:var(--green)">🔄 Recurring</span>`:''}
+            ${inc.notes?`<span style="color:var(--subtle)">${inc.notes}</span>`:''}
+          </div>
+        </div>
+        <span class="mono" style="font-weight:700;font-size:15px;color:var(--green);white-space:nowrap">+${fmt(inc.amt)}</span>
+        <button class="btn-del" onclick="deleteIncome('${inc.id}')">${ICONS.trash}</button>
+      </div>`;
+    }).join('')}</div>`:`<div class="empty"><div class="ei">💰</div><p>No income entries found</p></div>`}
+  </div>
+
+  ${recurring.length?`
+  <div class="card">
+    <div class="sec">🔄 Recurring Income Sources</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+      ${recurring.map(inc=>{const t=getIncomeType(inc.type);return`
+      <div style="background:var(--bg);border-radius:9px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">${t.emoji}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${inc.name||t.label}</div>
+          <div style="font-size:11px;color:var(--muted)">${fmt(inc.amt)} · ${inc.recurDay?`${ordinal(inc.recurDay)} every month`:'Monthly'}</div>
+        </div>
+        <span class="mono" style="font-size:12px;font-weight:700;color:var(--green)">${fmt(inc.amt)}/mo</span>
+      </div>`;}).join('')}
+    </div>
+  </div>`:''}`;
+
+  // Income donut chart
+  if(S.incomes.length&&el('ch-inc')){
+    const d=INCOME_TYPES.filter(t=>byType[t.id]);
+    charts.inc=new Chart(el('ch-inc'),{type:'doughnut',data:{datasets:[{data:d.map(t=>byType[t.id]),backgroundColor:d.map(t=>t.color),borderWidth:0}]},options:{cutout:'62%',plugins:{legend:{display:false}},animation:{duration:500}}});
+  }
+  // Income vs outflow bar chart
+  if(el('ch-inc-vs')){
+    charts.incVs=new Chart(el('ch-inc-vs'),{
+      type:'bar',
+      data:{labels:last6.map(m=>m.label),datasets:[
+        {label:'Income',data:last6.map(m=>m.inc),backgroundColor:'#10D9A8BB',borderRadius:4,borderSkipped:false},
+        {label:'Expenses',data:last6.map(m=>m.out),backgroundColor:'#F43F5EBB',borderRadius:4,borderSkipped:false},
+        {label:'Saved',data:last6.map(m=>m.saved),backgroundColor:'#7C5CFC99',borderRadius:4,borderSkipped:false},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{bodyColor:'#F0F0F8',backgroundColor:'#1C1C27',borderColor:'#252535',borderWidth:1,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)}`}}},scales:{x:{grid:{display:false},ticks:{color:'#7A7A92',font:{family:'Space Grotesk',size:11}}},y:{grid:{color:'#252535'},ticks:{color:'#7A7A92',font:{family:'Space Grotesk',size:11},callback:v=>fmt(v)}}}}
+    });
+  }
+}
+
+function deleteIncome(id){S.incomes=S.incomes.filter(i=>i.id!==id);save();renderIncome();}
+
+// ═══════════════════════════════════════
+// RECURRING TRANSACTIONS
+// ═══════════════════════════════════════
+function logRecurring(id){
+  const rec=S.recurs.find(r=>r.id===id);if(!rec)return;
+  S.expenses.unshift({id:uid(),cat:rec.cat,amt:Number(rec.amt),desc:rec.name,date:today(),payMode:rec.payMode||'cash',cardId:rec.cardId||null,recurId:rec.id});
+  rec.lastLoggedDate=today();
+  save();
+  showToast(`✓ "${rec.name}" — ${fmt(rec.amt)} logged as expense`,'green');
+  if(S.view==='recurring')renderRecurring();
+  else if(S.view==='dashboard')renderDashboard();
+}
+
+function logAllDue(){
+  const due=S.recurs.filter(r=>r.status!=='paused'&&!recurIsLoggedThisPeriod(r)&&['overdue','due_today','due_soon'].includes(recurStatus(r)));
+  if(!due.length){showToast('No overdue or due-today recurring transactions','green');return;}
+  if(!confirm(`Log ${due.length} recurring transaction${due.length!==1?'s':''}?\n\n${due.map(r=>`${r.name}: ${fmt(r.amt)}`).join('\n')}`))return;
+  due.forEach(r=>{
+    S.expenses.unshift({id:uid(),cat:r.cat,amt:Number(r.amt),desc:r.name,date:today(),payMode:r.payMode||'cash',cardId:r.cardId||null,recurId:r.id});
+    r.lastLoggedDate=today();
+  });
+  save();
+  showToast(`✓ ${due.length} recurring transaction${due.length!==1?'s':''} logged`,'green');
+  if(S.view==='recurring')renderRecurring();else renderDashboard();
+}
+
+function togglePauseRecurring(id){
+  const rec=S.recurs.find(r=>r.id===id);if(!rec)return;
+  rec.status=rec.status==='paused'?'active':'paused';
+  save();renderRecurring();
+}
+
+function deleteRecurring(id){
+  if(!confirm('Delete this recurring transaction? Your logged expenses will remain.'))return;
+  S.recurs=S.recurs.filter(r=>r.id!==id);save();renderRecurring();
+}
+
+function renderRecurring(){
+  const active=S.recurs.filter(r=>r.status!=='paused');
+  const paused=S.recurs.filter(r=>r.status==='paused');
+  const overdue=active.filter(r=>recurStatus(r)==='overdue');
+  const dueToday=active.filter(r=>recurStatus(r)==='due_today');
+  const dueSoon=active.filter(r=>recurStatus(r)==='due_soon');
+  const logged=active.filter(r=>recurStatus(r)==='logged');
+  const upcoming=active.filter(r=>recurStatus(r)==='upcoming');
+  const actionNeeded=[...overdue,...dueToday,...dueSoon];
+  const monthlyTotal=active.reduce((s,r)=>s+recurMonthlyAmt(r),0);
+  const pendingAmt=actionNeeded.reduce((s,r)=>s+Number(r.amt),0);
+
+  // Status config
+  const stConf={
+    overdue:{col:'var(--red)',bg:'#F43F5E18',border:'#F43F5E44',badge:'OVERDUE',icon:'🔴'},
+    due_today:{col:'var(--amber)',bg:'#F59E0B18',border:'#F59E0B44',badge:'DUE TODAY',icon:'🟠'},
+    due_soon:{col:'var(--amber)',bg:'#F59E0B0D',border:'#F59E0B33',badge:'DUE SOON',icon:'⚡'},
+    upcoming:{col:'var(--muted)',bg:'transparent',border:'var(--border)',badge:'UPCOMING',icon:'🕐'},
+    logged:{col:'var(--green)',bg:'#10D9A80D',border:'#10D9A833',badge:'LOGGED ✓',icon:'✅'},
+    paused:{col:'var(--subtle)',bg:'transparent',border:'var(--border)',badge:'PAUSED',icon:'⏸️'},
+  };
+
+  function recurCard(rec){
+    const st=recurStatus(rec),sc=stConf[st]||stConf.upcoming;
+    const cat=getCat(rec.cat),days=recurDaysUntilDue(rec);
+    const nextDate=recurNextDueDate(rec).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    const card=rec.cardId?getCard(rec.cardId):null;
+    const needsAction=['overdue','due_today','due_soon'].includes(st);
+    return`<div style="background:var(--surf);border:1px solid ${sc.border};border-left:3px solid ${sc.col};border-radius:12px;padding:16px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;background:${cat.color}22;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${cat.emoji}</div>
+          <div>
+            <div style="font-size:14px;font-weight:600">${rec.name}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${cat.label} · ${recurFreqLabel(rec)}</div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="mono" style="font-size:16px;font-weight:700;color:var(--text)">${fmt(rec.amt)}</div>
+          <span class="badge" style="background:${sc.bg};color:${sc.col};font-size:10px">${sc.icon} ${sc.badge}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:12px">
+        <span>Next: <strong style="color:${st==='overdue'?'var(--red)':st==='due_today'?'var(--amber)':'var(--text)'}">${st==='overdue'?Math.abs(days)+'d overdue':st==='due_today'?'Today':nextDate}</strong></span>
+        <span>·</span>
+        <span>${rec.freq==='monthly'?`₹${(rec.amt/1000).toFixed(rec.amt>=10000?1:0)}k/mo`:`${fmt(rec.amt)} per ${rec.freq}`}</span>
+        ${card?`<span>· 💳 ${card.name}</span>`:''}
+        ${rec.lastLoggedDate?`<span>· Last logged: ${rec.lastLoggedDate}</span>`:''}
+        ${rec.notes?`<span>· ${rec.notes}</span>`:''}
+      </div>
+      <div style="display:flex;gap:7px">
+        ${needsAction&&st!=='paused'?`<button class="btn-g" onclick="logRecurring('${rec.id}')" style="flex:1;justify-content:center">Log Now — ${fmt(rec.amt)}</button>`:''}
+        ${st==='logged'?`<div style="flex:1;text-align:center;padding:9px;font-size:13px;color:var(--green);font-weight:600">✓ Logged this period</div>`:''}
+        ${st==='upcoming'?`<button class="btn-s" onclick="logRecurring('${rec.id}')" style="flex:1;justify-content:center">Log Early</button>`:''}
+        <button class="btn-s" onclick="togglePauseRecurring('${rec.id}')" style="padding:9px 12px" title="${rec.status==='paused'?'Resume':'Pause'}">${rec.status==='paused'?'▶ Resume':'⏸ Pause'}</button>
+        <button class="btn-del" onclick="deleteRecurring('${rec.id}')">${ICONS.trash}</button>
+      </div>
+    </div>`;
+  }
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Recurring Transactions</h1><p>Bills, subscriptions, and regular expenses — log with one click</p></div>
+    <div style="display:flex;gap:8px">
+      ${actionNeeded.length>1?`<button class="btn-g" onclick="logAllDue()">Log All Due (${actionNeeded.length})</button>`:''}
+      <button class="btn" onclick="openAddRecurring()">${ICONS.plus} Add Recurring</button>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="grid4" style="margin-bottom:14px">
+    <div class="stat-card">
+      <div class="stat-lbl">Monthly Obligations</div>
+      <div class="stat-val c-r">${fmt(monthlyTotal)}</div>
+      <div class="stat-sub">${active.length} active · committed outflow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Action Required</div>
+      <div class="stat-val" style="color:${actionNeeded.length?'var(--red)':'var(--green)'}">${actionNeeded.length||'None'}</div>
+      <div class="stat-sub">${actionNeeded.length?`${fmt(pendingAmt)} to log now`:'All caught up ✓'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Logged This Month</div>
+      <div class="stat-val c-g">${logged.length}</div>
+      <div class="stat-sub">${fmt(logged.reduce((s,r)=>s+Number(r.amt),0))} recorded</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Upcoming This Month</div>
+      <div class="stat-val c-m">${upcoming.length}</div>
+      <div class="stat-sub">${fmt(upcoming.reduce((s,r)=>s+Number(r.amt),0))} incoming</div>
+    </div>
+  </div>
+
+  <!-- Action Required section -->
+  ${actionNeeded.length?`
+  <div style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+    <div class="sec" style="margin-bottom:0;color:var(--red)">⚠️ Action Required (${actionNeeded.length})</div>
+    ${actionNeeded.length>1?`<button class="btn-g" onclick="logAllDue()" style="padding:6px 14px;font-size:12px">Log All Now</button>`:''}
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:12px;margin-bottom:16px">
+    ${actionNeeded.map(r=>recurCard(r)).join('')}
+  </div>`:''}
+
+  <!-- Logged this period -->
+  ${logged.length?`
+  <div class="sec" style="margin-bottom:10px">✅ Logged This Period (${logged.length})</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:12px;margin-bottom:16px">
+    ${logged.map(r=>recurCard(r)).join('')}
+  </div>`:''}
+
+  <!-- Upcoming -->
+  ${upcoming.length?`
+  <div class="sec" style="margin-bottom:10px">🕐 Upcoming (${upcoming.length})</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:12px;margin-bottom:16px">
+    ${upcoming.map(r=>recurCard(r)).join('')}
+  </div>`:''}
+
+  <!-- Paused -->
+  ${paused.length?`
+  <div class="sec" style="margin-bottom:10px">⏸️ Paused (${paused.length})</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:12px;margin-bottom:16px">
+    ${paused.map(r=>recurCard(r)).join('')}
+  </div>`:''}
+
+  <!-- Empty state -->
+  ${!S.recurs.length?`
+  <div class="card">
+    <div class="empty"><div class="ei">🔄</div>
+    <p>No recurring transactions yet.<br>
+    <span style="font-size:12px;color:var(--subtle)">Add rent, EMIs, subscriptions, SIPs — anything that repeats.</span><br><br>
+    <button class="btn" onclick="openAddRecurring()">${ICONS.plus} Add First Recurring</button></p>
+    </div>
+  </div>`:''}
+
+  <!-- Monthly summary footer -->
+  ${S.recurs.length?`
+  <div class="card" style="margin-top:14px">
+    <div class="sec">📊 Monthly Commitments Summary</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${active.sort((a,b)=>Number(b.amt)-Number(a.amt)).map(r=>{const cat=getCat(r.cat);return`
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px">
+        <span style="font-size:14px">${cat.emoji}</span>
+        <span style="flex:1;color:#B0B0C8">${r.name}</span>
+        <span class="badge" style="background:${stConf[recurStatus(r)]?.col||'var(--muted)'}22;color:${stConf[recurStatus(r)]?.col||'var(--muted)'};font-size:10px">${stConf[recurStatus(r)]?.badge||''}</span>
+        <span class="mono" style="font-weight:600;white-space:nowrap">${fmt(recurMonthlyAmt(r))}/mo</span>
+      </div>`;}).join('')}
+      <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;font-weight:700;font-size:13px">
+        <span>Total Monthly Obligations</span>
+        <span class="mono c-r">${fmt(monthlyTotal)}/mo</span>
+      </div>
+    </div>
+  </div>`:''}`;
+}
+
+function openAddRecurring(){
+  openModal(`
+  <div class="mhd"><h2>Add Recurring Transaction</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div><label class="lbl">Category</label>
+      <select id="r-cat">${S.cats.map(c=>`<option value="${c.id}">${c.emoji} ${c.label}</option>`).join('')}</select>
+    </div>
+    <div><label class="lbl">Name / Description</label>
+      <input id="r-name" placeholder="e.g. Monthly Rent, Netflix, Home Loan EMI, Gym...">
+    </div>
+    <div><label class="lbl">Amount (₹)</label>
+      <input type="number" id="r-amt" placeholder="0" min="0">
+    </div>
+    <div>
+      <label class="lbl">Frequency</label>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px" id="r-freq-grid">
+        ${RECUR_FREQS.map((f,i)=>`<button class="pay-opt${i===2?' sel':''}" onclick="selectRecurFreq(this,'${f.id}')">
+          <div class="pay-opt-val" style="font-size:12px">${f.label}</div>
+          <div class="pay-opt-lbl">${f.sub}</div>
+        </button>`).join('')}
+      </div>
+      <input type="hidden" id="r-freq" value="monthly">
+    </div>
+    <!-- Monthly: day of month -->
+    <div id="r-monthly-opts">
+      <label class="lbl">Due on which day of month?</label>
+      <input type="number" id="r-dueday" value="1" min="1" max="31" placeholder="e.g. 1 for 1st of month">
+    </div>
+    <!-- Weekly: day of week -->
+    <div id="r-weekly-opts" style="display:none">
+      <label class="lbl">Which day of the week?</label>
+      <select id="r-weekday">${WEEK_DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select>
+    </div>
+    <!-- Annual/Quarterly: start date -->
+    <div id="r-date-opts" style="display:none">
+      <label class="lbl">Start / Reference Date</label>
+      <input type="date" id="r-startdate" value="${today()}">
+    </div>
+    <div>
+      <label class="lbl">Payment Mode</label>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="r-pm-cash" onclick="setRecurPayMode('cash')">💵 Cash / UPI</button>
+        <button class="toggle-btn" id="r-pm-card" onclick="setRecurPayMode('card')" ${!S.cards.length?'disabled':''}>💳 Credit Card${!S.cards.length?' (none)':''}</button>
+      </div>
+    </div>
+    <div id="r-card-wrap" style="display:none">
+      <label class="lbl">Select Card</label>
+      <select id="r-cardid">${S.cards.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select>
+    </div>
+    <div><label class="lbl">Notes (optional)</label><input id="r-notes" placeholder="e.g. Debited automatically, pay before 5th..."></div>
+    <!-- Preview -->
+    <div style="background:var(--bg);border-radius:9px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--muted)">This will add a reminder to log this expense every <span id="r-preview-freq">month</span></span>
+      <span class="mono" style="font-weight:700;color:var(--accent)" id="r-preview-amt">₹0</span>
+    </div>
+    <button class="btn" style="justify-content:center" onclick="submitRecurring()">Add Recurring</button>
+  </div>`);
+  // Setup live preview
+  el('r-amt').oninput=()=>{const v=el('r-preview-amt');if(v)v.textContent=fmt(el('r-amt').value||0);};
+}
+let _recurPayMode='cash';
+function setRecurPayMode(m){
+  _recurPayMode=m;
+  el('r-pm-cash').classList.toggle('active',m==='cash');
+  el('r-pm-card').classList.toggle('active',m==='card');
+  el('r-card-wrap').style.display=m==='card'?'block':'none';
+}
+function selectRecurFreq(btn,freq){
+  document.querySelectorAll('#r-freq-grid .pay-opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  el('r-freq').value=freq;
+  el('r-monthly-opts').style.display=freq==='monthly'?'block':'none';
+  el('r-weekly-opts').style.display=freq==='weekly'?'block':'none';
+  el('r-date-opts').style.display=['annual','quarterly'].includes(freq)?'block':'none';
+  const labels={daily:'day',weekly:'week',monthly:'month',quarterly:'quarter',annual:'year'};
+  const pf=el('r-preview-freq');if(pf)pf.textContent=labels[freq]||freq;
+}
+function submitRecurring(){
+  const cat=el('r-cat').value,name=(el('r-name').value||'').trim(),amt=Number(el('r-amt').value)||0;
+  if(!name){alert('Please enter a name.');return;}
+  if(!amt){alert('Please enter an amount.');return;}
+  const freq=el('r-freq').value;
+  const rec={
+    id:uid(),name,cat,amt,freq,status:'active',
+    dueDay:freq==='monthly'?Number(el('r-dueday').value)||1:null,
+    dueWeekDay:freq==='weekly'?Number(el('r-weekday').value):null,
+    startDate:['annual','quarterly'].includes(freq)?el('r-startdate').value:today(),
+    payMode:_recurPayMode,
+    cardId:_recurPayMode==='card'&&el('r-cardid')?el('r-cardid').value:null,
+    notes:el('r-notes').value,
+    lastLoggedDate:null,
+  };
+  S.recurs.push(rec);
+  save();closeModal();navigate('recurring');
+}
+  openModal(`
+  <div class="mhd"><h2>Add Income</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div><label class="lbl">Income Type</label>
+      <select id="m-itype" onchange="onIncTypeChange(this.value)">
+        ${INCOME_TYPES.map(t=>`<option value="${t.id}">${t.emoji} ${t.label}</option>`).join('')}
+      </select>
+    </div>
+    <div><label class="lbl">Description / Source</label><input id="m-iname" placeholder="e.g. June Salary, Freelance - XYZ Co., FD Interest..."></div>
+    <div><label class="lbl">Amount (₹)</label><input type="number" id="m-iamt" placeholder="0" min="0"></div>
+    <div><label class="lbl">Date Received</label><input type="date" id="m-idate" value="${today()}"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border-radius:8px;cursor:pointer" onclick="el('m-irec').click();toggleRecurDay()">
+      <input type="checkbox" id="m-irec" style="width:auto">
+      <label for="m-irec" style="font-size:13px;cursor:pointer">🔄 This is a recurring income (e.g. monthly salary)</label>
+    </div>
+    <div id="recur-day-wrap" style="display:none">
+      <label class="lbl">Expected on which day of month?</label>
+      <input type="number" id="m-irday" value="1" min="1" max="31" placeholder="1">
+    </div>
+    <div><label class="lbl">Notes (optional)</label><input id="m-inotes" placeholder="e.g. After TDS deduction, Q1 freelance payment..."></div>
+    <button class="btn" style="justify-content:center;margin-top:4px" onclick="submitIncome()">Add Income</button>
+  </div>`);
+  // Pre-select salary type and pre-fill with profile salary
+  el('m-iname').value=S.profile.name?S.profile.name+'\'s Salary':'Monthly Salary';
+  el('m-iamt').value=S.profile.salary||'';
+}
+function onIncTypeChange(typeId){
+  const names={salary:'Monthly Salary',freelance:'Freelance Payment',rental:'Rental Income',dividend:'Dividend Income',interest:'FD/Savings Interest',bonus:'Bonus',refund:'Refund',business:'Business Revenue',gift:'Gift Received',other:'Other Income'};
+  const nm=el('m-iname');if(nm&&(!nm.value||Object.values(names).includes(nm.value)))nm.value=names[typeId]||'';
+}
+function toggleRecurDay(){
+  const wrap=el('recur-day-wrap');
+  if(wrap)wrap.style.display=el('m-irec').checked?'block':'none';
+}
+function submitIncome(){
+  const type=el('m-itype').value,name=el('m-iname').value,amt=Number(el('m-iamt').value);
+  if(!amt||amt<=0){alert('Please enter a valid amount.');return;}
+  const inc={id:uid(),type,name:name||getIncomeType(type).label,amt,date:el('m-idate').value,isRecurring:el('m-irec').checked,recurDay:el('m-irec').checked?(Number(el('m-irday').value)||1):null,notes:el('m-inotes').value};
+  S.incomes.unshift(inc);
+  save();closeModal();navigate('income');
+}
+
+// ═══════════════════════════════════════
+// CREDIT CARDS VIEW
+// ═══════════════════════════════════════
+function renderCards(){
+  const totalOut=S.cards.reduce((s,c)=>s+cardOutstanding(c),0);
+  const totalLim=S.cards.reduce((s,c)=>s+Number(c.limit||0),0);
+  const totalUtil=totalLim>0?totalOut/totalLim*100:0;
+  const overdue=S.cards.filter(c=>cardStatus(c)==='overdue').length;
+  const urgent=S.cards.filter(c=>cardStatus(c)==='urgent').length;
+
+  const cardExpenses=S.expenses.filter(e=>e.cardId);
+  const filterCard=S._cardFilter||'all';
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Credit Cards</h1><p>Billing, payments, interest & limit tracking</p></div>
+    <button class="btn" onclick="openAddCard()">${ICONS.plus} Add Card</button>
+  </div>
+
+  ${overdue?`<div class="alert ae" style="margin-bottom:14px">${ICONS.warn} <span>${overdue} card${overdue>1?'s are':' is'} <strong>overdue</strong>. Interest is accruing daily. Make payments now.</span></div>`:''}
+  ${urgent&&!overdue?`<div class="alert aw" style="margin-bottom:14px">${ICONS.warn} <span>${urgent} card payment due <strong>within 5 days</strong>. Don't miss the deadline.</span></div>`:''}
+
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="stat-card"><div class="stat-lbl">Total Outstanding</div><div class="stat-val ${totalOut>0?'c-r':'c-g'}">${fmt(totalOut)}</div><div class="stat-sub">Across all cards</div></div>
+    <div class="stat-card"><div class="stat-lbl">Total Credit Limit</div><div class="stat-val c-m">${fmt(totalLim)}</div><div class="stat-sub">${S.cards.length} card${S.cards.length!==1?'s':''}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Credit Utilization</div><div class="stat-val" style="color:${totalUtil>=80?'var(--red)':totalUtil>=50?'var(--amber)':'var(--green)'}">${totalUtil.toFixed(0)}%</div><div class="stat-sub">${totalUtil>=80?'High — affects score':totalUtil>=50?'Moderate':'Healthy'}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Bills Status</div><div class="stat-val ${overdue?'c-r':urgent?'c-a':'c-g'}">${overdue?overdue+' Overdue':urgent?urgent+' Urgent':S.cards.length?'All Clear ✓':'No cards'}</div><div class="stat-sub">${S.cards.length-overdue-urgent} cards on time</div></div>
+  </div>
+
+  ${S.cards.length?`
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:16px">
+    ${S.cards.map(renderCardTile).join('')}
+  </div>`:`
+  <div class="card" style="margin-bottom:16px">
+    <div class="empty"><div class="ei">💳</div><p>No credit cards added yet.<br><br><button class="btn" onclick="openAddCard()">${ICONS.plus} Add Your First Card</button></p></div>
+  </div>`}
+
+  <!-- Card Transactions -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="sec" style="margin-bottom:0">Card Transactions</div>
+      <select style="width:auto" onchange="S._cardFilter=this.value;renderCards()">
+        <option value="all">All Cards</option>
+        ${S.cards.map(c=>`<option value="${c.id}" ${filterCard===c.id?'selected':''}>${c.name}</option>`).join('')}
+      </select>
+    </div>
+    ${(()=>{
+      const txns=(filterCard==='all'?cardExpenses:cardExpenses.filter(e=>e.cardId===filterCard)).slice(0,30);
+      if(!txns.length)return`<div class="empty" style="padding:30px 0"><div class="ei">💳</div><p>No card transactions yet</p></div>`;
+      return`<div>${txns.map((e,i)=>{const cat=getCat(e.cat),card=getCard(e.cardId)||{name:'Unknown',color:'#6B7280'};return`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;${i<txns.length-1?'border-bottom:1px solid var(--border)':''}"><div style="width:36px;height:36px;background:${cat.color}22;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${cat.emoji}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.desc||cat.label}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:7px;align-items:center"><span>${e.date}</span><span class="badge" style="background:${card.color}22;color:${card.color}">💳 ${card.name}</span></div></div><span class="mono c-r" style="font-weight:700;font-size:13px">-${fmt(e.amt)}</span></div>`;}).join('')}</div>`;
+    })()}
+  </div>`;
+}
+
+function renderCardTile(card){
+  const out=cardOutstanding(card);
+  const util=cardUtilPct(card);
+  const days=cardDaysUntilDue(card);
+  const st=cardStatus(card);
+  const interest=cardInterestDue(card);
+  const minDue=cardMinDue(card);
+  const cycleChg=cardCurrentCycleCharges(card);
+  const cyclePayment=cardPaymentThisCycle(card);
+  const barCol=util>=90?'var(--red)':util>=70?'var(--amber)':card.color;
+
+  const stConf={
+    clear:{txt:'ALL CLEAR ✓',col:'var(--green)',icon:'✅'},
+    ok:{txt:`DUE ${ordinal(card.dueDay)} (${days}d)`,col:'var(--muted)',icon:'🕐'},
+    soon:{txt:`DUE IN ${days} DAYS ⚡`,col:'var(--amber)',icon:'⚠️'},
+    urgent:{txt:`URGENT — ${days}D LEFT`,col:'var(--red)',icon:'🔴'},
+    overdue:{txt:`${Math.abs(days)}D OVERDUE`,col:'var(--red)',icon:'🚨'},
+  }[st];
+
+  const paidStatus=out<=0;
+  const nextDue=cardNextDueDate(card);
+  const nextDueStr=nextDue.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+
+  return`<div class="cc-tile" style="border-top-color:${card.color}">
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+      <div>
+        <div style="font-size:16px;font-weight:700">${card.name}</div>
+        <div style="font-size:12px;color:var(--muted)">${card.bank||'Credit Card'} · ${Number(card.interestRate)||3.5}%/mo interest</div>
+      </div>
+      <span class="badge" style="background:${stConf.col}22;color:${stConf.col};font-size:10px;white-space:nowrap">${stConf.icon} ${stConf.txt}</span>
+    </div>
+
+    <!-- Utilization -->
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span class="c-m">Credit Utilization</span>
+        <span class="mono" style="font-weight:700;color:${barCol}">${util.toFixed(0)}%${util>=80?' — High!':''}</span>
+      </div>
+      <div class="cc-util-bar"><div class="cc-util-fill" style="width:${util}%;background:${barCol}"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:4px">
+        <span class="mono" style="font-weight:700;color:${out>0?'var(--red)':'var(--text)'}">${fmt(out)} used</span>
+        <span class="c-m">of ${fmt(card.limit)} limit</span>
+      </div>
+    </div>
+
+    <!-- Info grid -->
+    <div class="cc-info-grid">
+      <div class="cc-info-cell">
+        <div class="cc-info-lbl">Statement Date</div>
+        <div class="cc-info-val">${ordinal(card.billingDay)} of month</div>
+      </div>
+      <div class="cc-info-cell">
+        <div class="cc-info-lbl">Payment Due</div>
+        <div class="cc-info-val" style="color:${days<0?'var(--red)':days<=5?'var(--amber)':'var(--text)'}">${nextDueStr}</div>
+      </div>
+      <div class="cc-info-cell">
+        <div class="cc-info-lbl">Minimum Due</div>
+        <div class="cc-info-val mono">${out>0?fmt(minDue):'₹0'}</div>
+      </div>
+      <div class="cc-info-cell">
+        <div class="cc-info-lbl">This Cycle Spent</div>
+        <div class="cc-info-val mono c-a">${fmt(cycleChg)}</div>
+      </div>
+    </div>
+
+    ${interest>0?`<div class="alert ae" style="margin-top:0;margin-bottom:10px">${ICONS.warn} Interest accruing: <strong>${fmt(interest)}</strong> for ${Math.abs(days)} overdue days</div>`:''}
+    ${util>=80&&util<100?`<div class="alert aw" style="margin-top:0;margin-bottom:10px">${ICONS.warn} ${util>=90?'Almost at limit!':'High utilization.'} Keep below 30% for good credit score.</div>`:''}
+    ${util>=100?`<div class="alert ae" style="margin-top:0;margin-bottom:10px">${ICONS.warn} <strong>Credit limit exceeded!</strong> New transactions may be declined.</div>`:''}
+
+    <!-- Payment status banner -->
+    <div class="cc-status" style="border-color:${paidStatus?'#10D9A844':'#F43F5E44'};background:${paidStatus?'#10D9A818':'#F43F5E18'}">
+      <span style="font-size:18px">${paidStatus?'✅':'❌'}</span>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:${paidStatus?'var(--green)':'var(--red)'}">${paidStatus?'No outstanding balance':'Payment Pending'}</div>
+        <div style="font-size:11px;color:var(--muted)">
+          ${paidStatus?'All bills paid for this cycle.':
+            days<0?`<strong>${fmt(out)}</strong> overdue since ${Math.abs(days)} days`:
+            `<strong>${fmt(out)}</strong> due by ${nextDueStr}`}
+          ${cyclePayment>0&&!paidStatus?` · Paid ${fmt(cyclePayment)} this cycle`:''}
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:8px;margin-top:10px">
+      ${out>0?`<button class="btn-g" onclick="openPayBill('${card.id}')" style="flex:1">💳 Pay ${fmt(out)}</button>`:
+        `<button class="btn-s" onclick="openPayBill('${card.id}')" style="flex:1">💳 Record Payment</button>`}
+      <button class="btn-s" onclick="openCardHistory('${card.id}')" title="History">${ICONS.hist}</button>
+      <button class="btn-del" onclick="deleteCard('${card.id}')" title="Delete">${ICONS.trash}</button>
+    </div>
+  </div>`;
+}
+
+// Card Modals
+function openAddCard(){
+  let selCol=CARD_COLORS[0];
+  openModal(`
+  <div class="mhd"><h2>Add Credit Card</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div class="frow">
+      <div><label class="lbl">Card Name</label><input id="m-cn" placeholder="HDFC Regalia, SBI SimplyCash..."></div>
+      <div><label class="lbl">Bank Name</label><input id="m-cb" placeholder="HDFC Bank, SBI..."></div>
+    </div>
+    <div><label class="lbl">Credit Limit (₹)</label><input type="number" id="m-cl" placeholder="200000" min="0"></div>
+    <div><label class="lbl">Current Outstanding Balance (₹)</label><input type="number" id="m-cbal" value="0" placeholder="0 for new card, or existing balance"></div>
+    <div style="font-size:11px;color:var(--subtle);margin-top:-8px">Enter your existing balance if you have any prior dues on this card</div>
+    <div class="frow">
+      <div>
+        <label class="lbl">Statement Date (Day of Month)</label>
+        <input type="number" id="m-cbd" value="5" min="1" max="28">
+        <div style="font-size:11px;color:var(--subtle);margin-top:4px">When your monthly bill is generated</div>
+      </div>
+      <div>
+        <label class="lbl">Payment Due Date (Day of Month)</label>
+        <input type="number" id="m-cdd" value="25" min="1" max="31">
+        <div style="font-size:11px;color:var(--subtle);margin-top:4px">Last date to pay without interest</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div>
+        <label class="lbl">Monthly Interest Rate (%)</label>
+        <input type="number" id="m-crate" value="3.5" step="0.1" min="0" placeholder="3.5">
+        <div style="font-size:11px;color:var(--subtle);margin-top:4px">Usually 3–3.5%/month (36–42% APR)</div>
+      </div>
+      <div>
+        <label class="lbl">Minimum Payment (%)</label>
+        <input type="number" id="m-cmdp" value="5" step="0.5" min="0" placeholder="5">
+        <div style="font-size:11px;color:var(--subtle);margin-top:4px">Min. due as % of outstanding</div>
+      </div>
+    </div>
+    <div>
+      <label class="lbl">Card Color</label>
+      <div class="swatches" id="ccsw">
+        ${CARD_COLORS.map(c=>`<div class="sw${c===selCol?' sel':''}" style="background:${c}" onclick="selCardColor(this,'${c}')"></div>`).join('')}
+      </div>
+      <input type="hidden" id="m-ccol" value="${selCol}">
+    </div>
+    <button class="btn" style="justify-content:center;margin-top:4px" onclick="submitCard()">Add Credit Card</button>
+  </div>`);
+}
+function selCardColor(sw,col){document.querySelectorAll('#ccsw .sw').forEach(s=>s.classList.remove('sel'));sw.classList.add('sel');el('m-ccol').value=col;}
+function submitCard(){
+  const name=(el('m-cn').value||'').trim(),bank=(el('m-cb').value||'').trim();
+  const limit=Number(el('m-cl').value)||0,bal=Number(el('m-cbal').value)||0;
+  const bd=Number(el('m-cbd').value)||5,dd=Number(el('m-cdd').value)||25;
+  const rate=Number(el('m-crate').value)||3.5,mdp=Number(el('m-cmdp').value)||5;
+  const color=el('m-ccol').value||CARD_COLORS[0];
+  if(!name){alert('Please enter a card name.');return;}
+  if(!limit){alert('Please enter the credit limit.');return;}
+  S.cards.push({id:uid(),name,bank,limit,initialBalance:bal,billingDay:bd,dueDay:dd,interestRate:rate,minDuePct:mdp,color,payments:[]});
+  save();closeModal();navigate('cards');
+}
+
+function openPayBill(cardId){
+  const card=getCard(cardId);if(!card)return;
+  const out=cardOutstanding(card),minDue=cardMinDue(card),interest=cardInterestDue(card);
+  openModal(`
+  <div class="mhd"><h2>Pay Bill — ${card.name}</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px;background:var(--bg);border-radius:10px">
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Total Outstanding</div><div class="mono c-r" style="font-size:16px;font-weight:700">${fmt(out)}</div></div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Minimum Due</div><div class="mono c-a" style="font-size:16px;font-weight:700">${fmt(minDue)}</div></div>
+      ${interest>0?`<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Interest Accrued</div><div class="mono c-r" style="font-size:14px;font-weight:700">${fmt(interest)}</div></div>`:''}
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Next Due Date</div><div style="font-size:14px;font-weight:600">${cardNextDueDate(card).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div></div>
+    </div>
+    ${interest>0?`<div class="alert ae" style="margin-bottom:0">${ICONS.warn} Paying only the minimum due keeps interest accruing at ${card.interestRate}%/month on the remaining balance.</div>`:''}
+    <div>
+      <label class="lbl">Quick Select Amount</label>
+      <div class="pay-quick">
+        <div class="pay-opt ${out>0?'sel':''}" onclick="setPayAmt(this,${out})"><div class="pay-opt-lbl">Full Amount</div><div class="pay-opt-val">${fmt(out)}</div></div>
+        <div class="pay-opt" onclick="setPayAmt(this,${minDue})"><div class="pay-opt-lbl">Minimum Due</div><div class="pay-opt-val">${fmt(minDue)}</div></div>
+        <div class="pay-opt" onclick="setPayAmt(this,0)"><div class="pay-opt-lbl">Custom</div><div class="pay-opt-val">Enter below</div></div>
+      </div>
+    </div>
+    <div><label class="lbl">Payment Amount (₹)</label><input type="number" id="m-pamt" value="${out}" min="1" oninput="document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'))"></div>
+    <div><label class="lbl">Payment Date</label><input type="date" id="m-pdate" value="${today()}"></div>
+    <div><label class="lbl">Note (optional)</label><input id="m-pnote" placeholder="UPI, NEFT, Auto-debit, Cheque..."></div>
+    ${out<=0?`<div class="alert ag" style="margin-bottom:0">${ICONS.check} No outstanding balance. Recording an advance payment.</div>`:''}
+    <button class="btn-g" style="justify-content:center" onclick="submitPayment('${cardId}')">Record Payment</button>
+  </div>`);
+}
+function setPayAmt(el,amt){
+  document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  if(amt>0)document.getElementById('m-pamt').value=amt;
+  else document.getElementById('m-pamt').focus();
+}
+function submitPayment(cardId){
+  const amt=Number(el('m-pamt').value);
+  const date=el('m-pdate').value,note=el('m-pnote').value;
+  if(!amt||amt<=0){alert('Enter a valid payment amount.');return;}
+  const card=getCard(cardId);if(!card)return;
+  card.payments=card.payments||[];
+  card.payments.push({id:uid(),date,amount:amt,note});
+  save();closeModal();navigate('cards');
+}
+
+function openCardHistory(cardId){
+  const card=getCard(cardId);if(!card)return;
+  const out=cardOutstanding(card),util=cardUtilPct(card);
+  const cardExp=S.expenses.filter(e=>e.cardId===cardId).sort((a,b)=>b.date.localeCompare(a.date));
+  const payments=(card.payments||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const totalCharged=cardTotalCharged(card),totalPaid=cardTotalPaid(card);
+  el('modal').classList.add('wide');
+  openModal(`
+  <div class="mhd"><h2>💳 ${card.name}</h2><button class="btn-del" onclick="closeModal();el('modal').classList.remove('wide')">${ICONS.x}</button></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+    ${[['Total Charged',fmt(totalCharged),'c-r'],['Total Paid',fmt(totalPaid),'c-g'],['Outstanding',fmt(out),out>0?'c-r':'c-g'],['Utilization',util.toFixed(0)+'%',util>=80?'c-r':util>=50?'c-a':'c-g']].map(([l,v,c])=>`<div style="background:var(--bg);border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:var(--muted);margin-bottom:3px">${l}</div><div class="mono ${c}" style="font-size:14px;font-weight:700">${v}</div></div>`).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <div class="sec">Payments</div>
+      ${payments.length?payments.map(p=>`<div class="hist-entry"><div class="hist-dot" style="background:var(--green)"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${fmt(p.amount)}</div><div style="font-size:11px;color:var(--muted)">${p.date}${p.note?' · '+p.note:''}</div></div></div>`).join(''):`<div style="color:var(--subtle);font-size:13px;padding:12px 0">No payments recorded</div>`}
+    </div>
+    <div>
+      <div class="sec">Card Transactions (${cardExp.length})</div>
+      <div style="max-height:400px;overflow-y:auto">
+        ${cardExp.length?cardExp.map(e=>{const cat=getCat(e.cat);return`<div class="hist-entry"><div class="hist-dot" style="background:${cat.color}"></div><div style="flex:1"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${e.desc||cat.label}</div><div style="font-size:11px;color:var(--muted)">${e.date} · ${cat.label}</div></div><span class="mono c-r" style="font-size:12px;font-weight:600">-${fmt(e.amt)}</span></div>`;}).join(''):`<div style="color:var(--subtle);font-size:13px;padding:12px 0">No transactions yet</div>`}
+      </div>
+    </div>
+  </div>`);
+}
+function deleteCard(id){
+  if(!confirm('Delete this card? All payments recorded for it will also be removed. Card expenses will remain in your expense list.'))return;
+  S.expenses.forEach(e=>{if(e.cardId===id){e.cardId=null;e.payMode='cash';}});
+  S.cards=S.cards.filter(c=>c.id!==id);
+  save();navigate('cards');
+}
+
+// ═══════════════════════════════════════
+// INVESTMENTS
+// ═══════════════════════════════════════
+function renderInvestments(){
+  const byType={};S.invs.forEach(i=>{byType[i.type]=(byType[i.type]||0)+invTotalInvested(i);});
+  const totalInv=S.invs.reduce((s,i)=>s+invTotalInvested(i),0);
+  const totalCur=S.invs.reduce((s,i)=>s+invCurrentValue(i),0);
+  el('main').innerHTML=`
+  <div class="phd"><div><h1>Investments</h1><p>Your wealth-building instruments</p></div><button class="btn" onclick="openAddInvestment()">${ICONS.plus} Log Investment</button></div>
+  <div class="grid4" style="margin-bottom:14px">
+    <div class="stat-card"><div class="stat-lbl">Total Invested</div><div class="stat-val c-a">${fmt(totalInv)}</div><div class="stat-sub">${S.invs.length} instruments</div></div>
+    <div class="stat-card"><div class="stat-lbl">Current Est. Value</div><div class="stat-val c-g">${fmt(totalCur)}</div><div class="stat-sub">Based on expected returns</div></div>
+    <div class="stat-card"><div class="stat-lbl">Total Gain</div><div class="stat-val" style="color:${totalCur>=totalInv?'var(--green)':'var(--red)'}">${fmt(totalCur-totalInv)}</div><div class="stat-sub">${fmtPct(totalInv>0?(totalCur-totalInv)/totalInv*100:0)}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Projected 5-Year</div><div class="stat-val c-acc">${fmt(S.invs.reduce((s,i)=>s+invProjectedAt(i,5),0))}</div><div class="stat-sub">At current rates</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:240px 1fr;gap:14px">
+    <div class="card">
+      <div class="sec">Portfolio Mix</div>
+      ${S.invs.length?`<div style="display:flex;justify-content:center;margin:8px 0"><canvas id="ch-inv" width="150" height="150"></canvas></div>
+        <div class="mono" style="font-size:20px;font-weight:700;color:var(--amber);text-align:center">${fmt(totalInv)}</div>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px">Invested</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          ${INV_TYPES.filter(t=>byType[t.id]).map(t=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px;color:#B0B0C8"><span style="width:7px;height:7px;border-radius:2px;background:${t.color};display:inline-block"></span>${t.emoji} ${t.label.split('/')[0].trim()}</span><span class="mono" style="font-weight:600">${fmt(byType[t.id])}</span></div>`).join('')}
+        </div>`:`<div class="empty"><div class="ei">📊</div><p>No investments yet</p></div>`}
+    </div>
+    <div class="card">
+      <div class="sec">All Investments</div>
+      ${S.invs.length?`<div style="overflow-x:auto"><table>
+        <thead><tr><th>Investment</th><th>Mode</th><th>Invested</th><th>Rate</th><th>Current Est.</th><th>Gain</th><th></th></tr></thead>
+        <tbody>${S.invs.map(inv=>{const t=getInvType(inv.type),cur=invCurrentValue(inv),inv0=invTotalInvested(inv),gain=cur-inv0,gp=inv0>0?gain/inv0*100:0;return`<tr><td><div style="display:flex;align-items:center;gap:9px"><span style="font-size:18px">${t.emoji}</span><div><div style="font-weight:500">${inv.name||t.label}</div><div style="font-size:11px;color:var(--muted)">${t.label}</div></div></div></td><td><span class="badge" style="background:${inv.mode==='sip'?'#7C5CFC22':'#10D9A822'};color:${inv.mode==='sip'?'#7C5CFC':'#10D9A8'}">${inv.mode==='sip'?'SIP':'Lump'}</span></td><td class="mono">${inv.mode==='sip'?fmt(inv.amt)+'/mo':fmt(inv.amt)}</td><td class="mono c-a" style="font-weight:600">${Number(inv.rate).toFixed(1)}%</td><td class="mono c-g" style="font-weight:600">${fmt(cur)}</td><td class="mono" style="color:${gain>=0?'var(--green)':'var(--red)'};font-weight:600">${gain>=0?'+':''}${fmt(gain)} <span style="font-size:10px;color:var(--muted)">(${gp>=0?'+':''}${gp.toFixed(1)}%)</span></td><td><button class="btn-del" onclick="delInv('${inv.id}')">${ICONS.trash}</button></td></tr>`;}).join('')}</tbody>
+      </table></div>`:`<div class="empty"><div class="ei">📈</div><p>No investments logged yet</p></div>`}
+    </div>
+  </div>`;
+  if(S.invs.length){const d=INV_TYPES.filter(t=>byType[t.id]);charts.inv=new Chart(el('ch-inv'),{type:'doughnut',data:{datasets:[{data:d.map(t=>byType[t.id]),backgroundColor:d.map(t=>t.color),borderWidth:0}]},options:{cutout:'60%',plugins:{legend:{display:false}},animation:{duration:500}}});}
+}
+function delInv(id){if(!confirm('Remove this investment?'))return;S.invs=S.invs.filter(i=>i.id!==id);save();renderInvestments();}
+
+// ═══════════════════════════════════════
+// WANTS & GOALS VIEW
+// ═══════════════════════════════════════
+function renderWants(){
+  const active=S.wants.filter(w=>w.status!=='achieved');
+  const achieved=S.wants.filter(w=>w.status==='achieved');
+  const totalMonthly=active.reduce((s,w)=>s+wantMonthlyNeeded(w),0);
+  const totalLeft=active.reduce((s,w)=>s+wantRemaining(w),0);
+  const sal=Number(S.profile.salary)||0;
+  const spent=S.expenses.filter(e=>mKey(e.date)===thisMonth()).reduce((s,e)=>s+Number(e.amt),0);
+  const invOut=thisMonthInvOutflow();
+  const freeNow=Math.max(0,sal-spent-invOut);
+  const gap=Math.max(0,totalMonthly-freeNow);
+  const sugg=savingSuggestions(Math.max(0,gap));
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Wants & Goals ⭐</h1><p>Save smart — fund the things you want without breaking fixed expenses</p></div>
+    <button class="btn" onclick="openAddWant()">${ICONS.plus} Add Want</button>
+  </div>
+
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="stat-card"><div class="stat-lbl">Total Left to Save</div><div class="stat-val c-acc">${fmt(totalLeft)}</div><div class="stat-sub">${active.length} active goal${active.length!==1?'s':''} · ${achieved.length} achieved</div></div>
+    <div class="stat-card"><div class="stat-lbl">Monthly Saving Needed</div><div class="stat-val ${totalMonthly>freeNow?'c-r':'c-g'}">${fmt(totalMonthly)}</div><div class="stat-sub">${totalMonthly>0?`across all goals`:'No active goals'}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Free Money This Month</div><div class="stat-val ${freeNow>=totalMonthly?'c-g':'c-a'}">${fmt(freeNow)}</div><div class="stat-sub">After expenses &amp; investments${gap>0?` · <span style="color:var(--red)">₹${freeNow>0?fmt(gap):fmt(totalMonthly)} short</span>`:' · <span style="color:var(--green)">Enough! ✓</span>'}</div></div>
+  </div>
+
+  ${totalMonthly>0?`
+  <!-- Smart Saving Plan -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="sec" style="margin-bottom:0">${ICONS.scissors} Smart Saving Plan</div>
+      <span style="font-size:12px;color:var(--muted)">Need <strong style="color:var(--text)">${fmt(totalMonthly)}</strong>/mo · Have <strong style="color:${freeNow>=totalMonthly?'var(--green)':'var(--amber)'}"> ${fmt(freeNow)}</strong>/mo free</span>
+    </div>
+
+    ${freeNow>=totalMonthly?`
+    <div class="alert ag" style="margin-bottom:12px">${ICONS.check} You already have enough free money (${fmt(freeNow)}/month) to fund all your goals without cutting any expenses!</div>
+    `:`
+    <div class="alert aw" style="margin-bottom:12px">${ICONS.warn} You need ${fmt(totalMonthly)}/month but only ${fmt(freeNow)}/month is free. Below are suggested cuts from <strong>flexible expenses only</strong> — rent, health, investments and emergency fund are never touched.</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:${sugg.suggestions.length?'14':'0'}px">
+      ${sugg.suggestions.map(sg=>{
+        const cutPct=sg.budget>0?Math.round(sg.suggestedCut/sg.budget*100):0;
+        const newPct=100-cutPct;
+        return`<div style="background:var(--bg);border-radius:10px;padding:13px 14px">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+            <span style="font-size:20px">${sg.cat.emoji}</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600">${sg.cat.label}</div>
+              <div style="font-size:11px;color:var(--muted)">Budget: ${fmt(sg.budget)}/mo</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px;color:var(--muted)">Save</div>
+              <div class="mono" style="font-weight:700;color:var(--red);font-size:14px">-${fmt(sg.suggestedCut)}</div>
+            </div>
+          </div>
+          <div class="progress" style="height:5px;margin-bottom:5px">
+            <div class="pbar" style="width:${newPct}%;background:${sg.cat.color}"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted)">
+            <span>New limit: <strong style="color:var(--text)">${fmt(sg.newBudget)}/mo</strong></span>
+            <span>Reduce by ${cutPct}%</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${!sugg.canCover?`<div class="alert ae" style="margin-bottom:0">${ICONS.warn} Even with these cuts, you're still <strong>${fmt(sugg.shortfall)}</strong> short/month. Consider extending some goal timelines or adding more months.</div>`:''}
+    `}
+
+    <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
+      <div style="font-size:11px;color:var(--subtle);display:flex;gap:12px;flex-wrap:wrap">
+        <span>🔒 Protected: <strong style="color:var(--muted)">Rent, Investments, Emergency Fund, Health</strong></span>
+        <span>✂️ Flexible: <strong style="color:var(--muted)">${S.cats.filter(c=>!FIXED_CATS.includes(c.id)).map(c=>c.label.split(' ')[0]).join(', ')}</strong></span>
+      </div>
+    </div>
+  </div>`:''}
+
+  <!-- Active Wants Grid -->
+  <div style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+    <div class="sec" style="margin-bottom:0">Active Goals (${active.length})</div>
+  </div>
+  ${active.length?`
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:16px">
+    ${active.map(w=>renderWantCard(w)).join('')}
+  </div>
+  `:`
+  <div class="card" style="margin-bottom:16px">
+    <div class="empty"><div class="ei">⭐</div><p>No active goals yet.<br><span style="font-size:11px;color:var(--subtle)">Add things you want to save for — shoes, gadgets, trips, anything.</span><br><br><button class="btn" onclick="openAddWant()">${ICONS.plus} Add Your First Want</button></p></div>
+  </div>`}
+
+  <!-- Achieved -->
+  ${achieved.length?`
+  <div class="card">
+    <div class="sec">🏆 Achieved Goals</div>
+    ${achieved.map((w,i)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;${i<achieved.length-1?'border-bottom:1px solid var(--border)':''}">
+      <span style="font-size:22px">${w.emoji||'🎯'}</span>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600">${w.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${fmt(w.targetAmount)} · ${wantTotalSaved(w)>=w.targetAmount?'Fully saved':'Marked done'}</div>
+      </div>
+      <span class="badge" style="background:#10D9A822;color:var(--green)">✓ Achieved</span>
+      <button class="btn-del" onclick="deleteWant('${w.id}')">${ICONS.trash}</button>
+    </div>`).join('')}
+  </div>`:''}`;}
+
+function renderWantCard(w){
+  const saved=wantTotalSaved(w),target=Number(w.targetAmount)||0;
+  const rem=wantRemaining(w),prog=wantProgress(w);
+  const monthly=wantMonthlyNeeded(w),months=wantMonthsLeft(w);
+  const col=w.color||'var(--accent)';
+  const prioConf={low:{lbl:'Low',col:'var(--muted)'},medium:{lbl:'Medium',col:'var(--amber)'},high:{lbl:'High',col:'var(--red)'},dream:{lbl:'Dream 💫',col:'var(--accent)'}};
+  const prio=prioConf[w.priority||'medium']||prioConf.medium;
+  const dateStr=w.targetDate?new Date(w.targetDate).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):null;
+  const sal=Number(S.profile.salary)||0;
+  const freeNow=Math.max(0,sal-S.expenses.filter(e=>mKey(e.date)===thisMonth()).reduce((s,e)=>s+Number(e.amt),0)-thisMonthInvOutflow());
+  const canAfford=freeNow>=monthly;
+
+  return`<div style="background:var(--surf);border:1px solid var(--border);border-top:3px solid ${col};border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:0">
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:28px;line-height:1">${w.emoji||'🛍️'}</span>
+        <div>
+          <div style="font-size:15px;font-weight:700">${w.name}</div>
+          <div style="font-size:11px;color:var(--muted)">Goal: ${fmt(target)}</div>
+        </div>
+      </div>
+      <span class="badge" style="background:${prio.col}22;color:${prio.col};font-size:10px">${prio.lbl}</span>
+    </div>
+
+    <!-- Progress -->
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span class="c-m">${fmt(saved)} saved</span>
+        <span class="mono" style="font-weight:700;color:${col}">${prog.toFixed(0)}%</span>
+      </div>
+      <div style="height:9px;background:var(--surf2);border-radius:9px;overflow:hidden">
+        <div style="height:100%;width:${prog}%;background:${col};border-radius:9px;transition:width 0.5s"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
+        <span>${fmt(rem)} more to go</span><span>of ${fmt(target)}</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+      <div style="background:var(--bg);border-radius:8px;padding:9px 11px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">Save per month</div>
+        <div class="mono" style="font-size:15px;font-weight:700;color:${col}">${fmt(monthly)}</div>
+        <div style="font-size:10px;margin-top:2px;color:${canAfford?'var(--green)':'var(--red)'}">${canAfford?'✓ Affordable now':'✗ Need to cut expenses'}</div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:9px 11px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">${w.targetDate?'Target date':'Time to goal'}</div>
+        <div style="font-size:14px;font-weight:600">${dateStr||months+' months'}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${months} month${months!==1?'s':''} away</div>
+      </div>
+    </div>
+
+    <!-- Contributions history (last 3) -->
+    ${(w.contributions||[]).length>0?`
+    <div style="margin-bottom:10px;padding:8px 10px;background:var(--bg);border-radius:8px">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px">Recent contributions</div>
+      ${[...(w.contributions||[])].reverse().slice(0,3).map(c=>`
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0">
+        <span class="c-m">${c.date}${c.note?' · '+c.note:''}</span>
+        <span class="mono" style="color:var(--green);font-weight:600">+${fmt(c.amount)}</span>
+      </div>`).join('')}
+    </div>`:''}
+
+    ${w.notes?`<div style="font-size:11px;color:var(--muted);padding:7px 10px;background:var(--bg);border-radius:7px;margin-bottom:10px">"${w.notes}"</div>`:''}
+
+    <!-- Actions -->
+    <div style="display:flex;gap:8px;margin-top:auto">
+      <button class="btn" onclick="openContribute('${w.id}')" style="flex:1">${ICONS.plus} Save ${fmt(monthly)}</button>
+      <button class="btn-s" onclick="achieveWant('${w.id}')" title="Mark as achieved" style="padding:9px 11px" title="Mark as done">✓</button>
+      <button class="btn-del" onclick="deleteWant('${w.id}')">${ICONS.trash}</button>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// PORTFOLIO
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+// PORTFOLIO SCENARIO MATH
+// ═══════════════════════════════════════
+// Conservative = 55% of assumed rate (bad decade), Optimistic = 140% (bull run)
+function scenarioRate(rate,scenario){
+  if(scenario==='conservative')return Math.max(3,rate*0.55);
+  if(scenario==='optimistic')return Math.min(32,rate*1.40);
+  return rate;
+}
+function invProjectedScenario(inv,addYrs,scenario){
+  const rate=scenarioRate(Number(inv.rate)||0,scenario);
+  const amt=Number(inv.amt)||0,mo=moElapsed(inv.date);
+  return inv.mode==='sip'?calcSIP(amt,rate,mo+addYrs*12):calcLump(amt,rate,mo/12+addYrs);
+}
+// Convert a future nominal amount into today's purchasing power
+function toRealMoney(nominalAmt,years,inflPct){
+  return nominalAmt/Math.pow(1+inflPct/100,years);
+}
+// Rough years-to-FI via monthly iteration (real return basis)
+function yearsToFI(currentPortfolio,monthlyContrib,annualRatePct,target){
+  if(currentPortfolio>=target)return 0;
+  if(annualRatePct<=0&&monthlyContrib<=0)return null;
+  const r=annualRatePct/100/12;
+  let mo=0,val=currentPortfolio;
+  while(val<target&&mo<12*80){val=r>0?val*(1+r)+monthlyContrib:val+monthlyContrib;mo++;}
+  return mo<12*80?Math.ceil(mo/12):null;
+}
+
+function renderPortfolio(){
+  const INFL=S.inflationRate||6;                   // India default: 6% annual inflation
+  const totalInv=S.invs.reduce((s,i)=>s+invTotalInvested(i),0);
+  const totalCur=S.invs.reduce((s,i)=>s+invCurrentValue(i),0);
+  const wRate=totalInv>0?S.invs.reduce((s,i)=>s+(Number(i.rate)||0)*(invTotalInvested(i)/totalInv),0):0;
+  const realRate=Math.max(0.5,wRate-INFL);         // real return = nominal − inflation
+
+  // Average monthly expenses (last 3 months)
+  const avgExp=(()=>{const now=new Date();let t=0,n=0;for(let i=0;i<3;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1),k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;const mo=S.expenses.filter(e=>mKey(e.date)===k);if(mo.length){t+=mo.reduce((s,e)=>s+Number(e.amt),0);n++;}}return n?t/n:Number(S.profile.salary)*0.6;})();
+
+  // Emergency fund
+  const efInvs=S.invs.filter(i=>i.isEmergency),efCur=efInvs.reduce((s,i)=>s+invCurrentValue(i),0);
+  const efTarget=avgExp*6,efPct=efTarget>0?Math.min(100,efCur/efTarget*100):0;
+
+  // FI — corpus in TODAY's rupees (4% SWR = 25× annual spending)
+  const fiTarget=avgExp*12*25,fiPct=fiTarget>0?Math.min(100,totalCur/fiTarget*100):0;
+  const monthlyInvOut=thisMonthInvOutflow();
+  const fiYrsNominal=yearsToFI(totalCur,monthlyInvOut,wRate,fiTarget);
+  const fiYrsReal=yearsToFI(totalCur,monthlyInvOut,realRate,fiTarget);
+
+  // Scenario portfolio totals at 10 years
+  const sc10=(s)=>S.invs.reduce((t,i)=>t+invProjectedScenario(i,10,s),0);
+  const conserv10=sc10('conservative'),expect10=sc10('expected'),optim10=sc10('optimistic');
+  const real10=toRealMoney(expect10,10,INFL);
+
+  // Chart data: 0–10 years, 3 scenarios
+  const gYrs=Array.from({length:11},(_,i)=>i);
+  const gC=gYrs.map(yr=>S.invs.reduce((s,i)=>s+invProjectedScenario(i,yr,'conservative'),0));
+  const gE=gYrs.map(yr=>S.invs.reduce((s,i)=>s+invProjectedAt(i,yr),0));
+  const gO=gYrs.map(yr=>S.invs.reduce((s,i)=>s+invProjectedScenario(i,yr,'optimistic'),0));
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Portfolio & Returns</h1><p>Scenario analysis, real returns &amp; inflation-adjusted projections</p></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+        Inflation rate:
+        <input type="number" value="${INFL}" min="1" max="20" step="0.5" style="width:52px;padding:4px 7px;font-size:12px;font-family:'JetBrains Mono'" onchange="S.inflationRate=Number(this.value)||6;renderPortfolio()">
+        <span style="color:var(--muted)">% / yr</span>
+      </label>
+      <button class="btn-s" onclick="openAddInvestment()">${ICONS.plus} Add Investment</button>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER — must appear before any numbers -->
+  <div style="background:#F59E0B0D;border:1px solid #F59E0B55;border-left:4px solid #F59E0B;border-radius:10px;padding:14px 18px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+      <span style="font-size:15px">⚠️</span>
+      <strong style="font-size:13px;color:var(--amber)">Projection Notice — Read Before Acting on These Numbers</strong>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;font-size:11px;color:#B0B0C8">
+      <span>• These are <strong>mathematical estimates only</strong> — not guaranteed returns or financial advice</span>
+      <span>• Equity markets can <strong>drop 30–50% in a single year</strong> before recovering over time</span>
+      <span>• Scenarios: <span style="color:#F59E0B">Conservative</span> = ×0.55 rate · <span style="color:#A78BFA">Expected</span> = your rate · <span style="color:#10D9A8">Optimistic</span> = ×1.40 rate</span>
+      <span>• <strong>"Real ₹"</strong> = purchasing power in today's rupees after <strong>${INFL}% annual inflation</strong>. Change rate above.</span>
+      <span>• Sequence-of-returns matters: same average rate, different year-order = very different outcomes</span>
+      <span>• Consult a <strong>SEBI-registered investment advisor</strong> for personalised guidance</span>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="grid4" style="margin-bottom:14px">
+    <div class="stat-card"><div class="stat-lbl">Total Invested</div><div class="stat-val c-a">${fmt(totalInv)}</div><div class="stat-sub">Capital deployed</div></div>
+    <div class="stat-card"><div class="stat-lbl">Current Est. Value</div><div class="stat-val c-g">${fmt(totalCur)}</div><div class="stat-sub">${fmtPct(totalInv>0?(totalCur-totalInv)/totalInv*100:0)} overall gain</div></div>
+    <div class="stat-card"><div class="stat-lbl">Nominal Return Rate</div><div class="stat-val c-acc">${wRate.toFixed(1)}%</div><div class="stat-sub">Weighted avg (what you assumed)</div></div>
+    <div class="stat-card"><div class="stat-lbl">Real Return Rate</div><div class="stat-val" style="color:var(--green)">${realRate.toFixed(1)}%</div><div class="stat-sub">After ${INFL}% inflation · actual growth</div></div>
+  </div>
+
+  <!-- 3-scenario summary -->
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="card" style="border-top:3px solid #F59E0B">
+      <div style="font-size:10px;color:#F59E0B;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">📉 Bear Case · ×0.55 rate</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${[['5 years',S.invs.reduce((s,i)=>s+invProjectedScenario(i,5,'conservative'),0)],['10 years',conserv10],['15 years',S.invs.reduce((s,i)=>s+invProjectedScenario(i,15,'conservative'),0)]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span class="c-m">${l}</span><span class="mono" style="font-weight:700;color:#F59E0B">${fmt(v)}</span></div>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--subtle);margin-top:10px">If your actual returns are 45% lower than assumed — a prolonged bear market or poor fund selection.</div>
+    </div>
+    <div class="card" style="border-top:3px solid #7C5CFC">
+      <div style="font-size:10px;color:#A78BFA;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">📊 Base Case · Your rate</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${[['5 years',S.invs.reduce((s,i)=>s+invProjectedAt(i,5),0)],['10 years',expect10],['15 years',S.invs.reduce((s,i)=>s+invProjectedAt(i,15),0)]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span class="c-m">${l}</span><span class="mono" style="font-weight:700;color:#A78BFA">${fmt(v)}</span></div>`).join('')}
+      </div>
+      <div style="padding:8px 10px;background:var(--bg);border-radius:7px;margin-top:10px;font-size:11px">
+        <div style="color:var(--muted);margin-bottom:2px">Real value (today's ₹) at 10yr</div>
+        <div class="mono" style="font-weight:700;font-size:14px;color:var(--accent)">${fmt(real10)}</div>
+        <div style="font-size:10px;color:var(--subtle);margin-top:2px">₹${(expect10/real10).toFixed(2)} of future ₹ = ₹1 today</div>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid #10D9A8">
+      <div style="font-size:10px;color:#10D9A8;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">🚀 Bull Case · ×1.40 rate</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${[['5 years',S.invs.reduce((s,i)=>s+invProjectedScenario(i,5,'optimistic'),0)],['10 years',optim10],['15 years',S.invs.reduce((s,i)=>s+invProjectedScenario(i,15,'optimistic'),0)]].map(([l,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span class="c-m">${l}</span><span class="mono" style="font-weight:700;color:#10D9A8">${fmt(v)}</span></div>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--subtle);margin-top:10px">If your actual returns are 40% higher than assumed — a strong bull run or excellent fund picks.</div>
+    </div>
+  </div>
+
+  <!-- Per-investment scenario table -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="sec" style="margin-bottom:0">Per-Investment Scenario Breakdown</div>
+      <span style="font-size:10px;color:var(--subtle)">All projections at 10 years from today</span>
+    </div>
+    ${S.invs.length?`<div style="overflow-x:auto"><table>
+      <thead>
+        <tr>
+          <th>Investment</th><th>Mode</th><th>Rate</th><th>Invested</th>
+          <th style="color:#F59E0B">📉 Bear (10yr)</th>
+          <th style="color:#A78BFA">📊 Base (10yr)</th>
+          <th style="color:#10D9A8">🚀 Bull (10yr)</th>
+          <th style="color:var(--accent)">Real ₹ (today)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${S.invs.map(inv=>{
+          const t=getInvType(inv.type);
+          const inv0=invTotalInvested(inv);
+          const p_c=invProjectedScenario(inv,10,'conservative');
+          const p_e=invProjectedAt(inv,10);
+          const p_o=invProjectedScenario(inv,10,'optimistic');
+          const p_r=toRealMoney(p_e,10,INFL);
+          const cRate=scenarioRate(Number(inv.rate)||0,'conservative');
+          const oRate=scenarioRate(Number(inv.rate)||0,'optimistic');
+          return`<tr>
+            <td><div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:16px">${t.emoji}</span>
+              <div><div style="font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${inv.name||t.label}</div>
+              <div style="font-size:10px;color:var(--muted)">${t.label}${inv.isEmergency?' 🛡️':''}</div></div>
+            </div></td>
+            <td><span class="badge" style="background:${inv.mode==='sip'?'#7C5CFC22':'#10D9A822'};color:${inv.mode==='sip'?'#7C5CFC':'#10D9A8'}">${inv.mode==='sip'?'SIP':'Lump'}</span></td>
+            <td>
+              <div class="mono c-a" style="font-weight:600">${Number(inv.rate).toFixed(1)}%</div>
+              <div style="font-size:10px;color:var(--muted)">${cRate.toFixed(1)}% – ${oRate.toFixed(1)}%</div>
+            </td>
+            <td class="mono" style="font-size:12px">${inv.mode==='sip'?fmt(inv.amt)+'/mo':fmt(inv0)}</td>
+            <td class="mono" style="font-weight:600;color:#F59E0B">${fmt(p_c)}</td>
+            <td class="mono" style="font-weight:600;color:#A78BFA">${fmt(p_e)}</td>
+            <td class="mono" style="font-weight:600;color:#10D9A8">${fmt(p_o)}</td>
+            <td>
+              <div class="mono" style="font-weight:700;color:var(--accent)">${fmt(p_r)}</div>
+              <div style="font-size:10px;color:var(--subtle)">in today's ₹</div>
+            </td>
+          </tr>`;
+        }).join('')}
+        <tr style="background:var(--surf2)">
+          <td colspan="3"><strong>TOTAL PORTFOLIO</strong></td>
+          <td class="mono" style="font-weight:700">${fmt(totalInv)}</td>
+          <td class="mono" style="font-weight:700;color:#F59E0B">${fmt(conserv10)}</td>
+          <td class="mono" style="font-weight:700;color:#A78BFA">${fmt(expect10)}</td>
+          <td class="mono" style="font-weight:700;color:#10D9A8">${fmt(optim10)}</td>
+          <td><div class="mono" style="font-weight:700;font-size:14px;color:var(--accent)">${fmt(real10)}</div><div style="font-size:10px;color:var(--subtle)">in today's ₹</div></td>
+        </tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:10px;font-size:10px;color:var(--subtle);border-top:1px solid var(--border);padding-top:8px">
+      Range column in Rate = Conservative rate – Optimistic rate &nbsp;·&nbsp; Real ₹ = Base case value ÷ (1+${INFL/100})^10 &nbsp;·&nbsp; 
+      Bear ×0.55 · Bull ×1.40 of your assumed rate
+    </div>`:`<div class="empty"><div class="ei">📊</div><p>No investments to project</p></div>`}
+  </div>
+
+  <!-- Chart + FI/EF -->
+  <div class="grid2" style="margin-bottom:14px">
+    <!-- 3-line growth chart -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="sec" style="margin-bottom:0">Cone of Uncertainty — 10 Year Projection</div>
+        <div style="display:flex;gap:12px;font-size:10px;color:var(--muted)">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:14px;height:2px;background:#F59E0B;display:inline-block;border-top:2px dashed #F59E0B"></span>Bear</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:14px;height:2px;background:#7C5CFC;display:inline-block"></span>Base</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:14px;height:2px;background:#10D9A8;display:inline-block;border-top:2px dashed #10D9A8"></span>Bull</span>
+        </div>
+      </div>
+      ${S.invs.length?`<div style="position:relative;height:240px"><canvas id="ch-growth"></canvas></div>
+      <div style="margin-top:10px;font-size:10px;color:var(--subtle)">
+        Spread between Bear &amp; Bull at 10yr: <strong style="color:var(--text)">${fmt(optim10-conserv10)}</strong> — this is the uncertainty you carry.
+      </div>`:`<div class="empty"><div class="ei">📈</div><p>Add investments to see projections</p></div>`}
+    </div>
+
+    <!-- Right column: Real Return context + EF + FI -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- Real return explainer -->
+      <div class="card">
+        <div class="sec">Nominal vs Real Returns 🔍</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${[
+            ['Nominal rate (assumed)',wRate.toFixed(1)+'%','var(--amber)','What you entered — includes inflation'],
+            ['Inflation (India avg)',INFL+'%','var(--red)','Price rise erodes purchasing power'],
+            ['Real return rate',realRate.toFixed(1)+'%','var(--green)','Actual wealth growth after inflation'],
+          ].map(([l,v,c,sub])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg);border-radius:8px">
+            <div><div style="font-size:12px;font-weight:500">${l}</div><div style="font-size:10px;color:var(--subtle)">${sub}</div></div>
+            <div class="mono" style="font-size:15px;font-weight:700;color:${c}">${v}</div>
+          </div>`).join('')}
+          <div style="font-size:11px;color:var(--subtle);padding:6px 2px">
+            ₹1 invested today at ${wRate.toFixed(0)}% nominal = ₹${calcLump(1,wRate,10).toFixed(2)} in 10 years — but it buys only <strong style="color:var(--text)">₹${(calcLump(1,wRate,10)/Math.pow(1+INFL/100,10)).toFixed(2)} worth</strong> of goods at today's prices.
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Fund -->
+      <div class="card">
+        <div class="sec">Emergency Fund 🛡️</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span class="c-m">Target (6 months expenses)</span><span class="mono" style="font-weight:600">${fmt(efTarget)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:10px"><span class="c-m">Saved (marked as emergency)</span><span class="mono c-g" style="font-weight:600">${fmt(efCur)}</span></div>
+        <div class="progress" style="height:7px;margin-bottom:6px"><div class="pbar" style="width:${efPct}%;background:${efPct>=100?'var(--green)':efPct>=50?'var(--amber)':'var(--accent)'}"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)">
+          <span>${efPct.toFixed(0)}% of target</span>
+          <span>${efCur>=efTarget?'Target reached! 🎉':fmt(efTarget-efCur)+' remaining'}</span>
+        </div>
+      </div>
+
+      <!-- FI Calculator with REAL vs NOMINAL comparison -->
+      <div class="card">
+        <div class="sec">Financial Independence 🎯</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">25× annual expenses · FI corpus = <strong>${fmt(fiTarget)}</strong> in today's rupees</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+          ${[['Avg Monthly Exp',fmt(avgExp)],['Annual Expenses',fmt(avgExp*12)],['FI Corpus (Today)',fmt(fiTarget)],['Current Portfolio',fmt(totalCur)]].map(([l,v])=>`<div style="background:var(--bg);border-radius:8px;padding:9px 11px"><div style="font-size:10px;color:var(--muted);margin-bottom:2px">${l}</div><div class="mono" style="font-size:12px;font-weight:700">${v}</div></div>`).join('')}
+        </div>
+        <div class="progress" style="height:7px;margin-bottom:10px"><div class="pbar" style="width:${fiPct}%;background:${fiPct>=100?'var(--green)':fiPct>=50?'var(--amber)':'var(--accent)'}"></div></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">${fiPct.toFixed(1)}% of FI goal reached</div>
+
+        <!-- Nominal vs Real FI timeline comparison -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--bg);border-radius:9px;padding:10px 12px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:4px">At nominal ${wRate.toFixed(1)}%</div>
+            <div class="mono" style="font-size:17px;font-weight:700;color:var(--amber)">${fiYrsNominal!=null?fiYrsNominal+' yrs':'80+ yrs'}</div>
+            <div style="font-size:10px;color:var(--subtle);margin-top:3px">Looks good — ignores inflation</div>
+          </div>
+          <div style="background:var(--bg);border-radius:9px;padding:10px 12px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:4px">At real ${realRate.toFixed(1)}% (after inflation)</div>
+            <div class="mono" style="font-size:17px;font-weight:700;color:var(--red)">${fiYrsReal!=null?fiYrsReal+' yrs':'80+ yrs'}</div>
+            <div style="font-size:10px;color:var(--subtle);margin-top:3px">More honest — buys today's lifestyle</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--subtle);margin-top:8px">
+          The ${fiYrsReal!=null&&fiYrsNominal!=null?(fiYrsReal-fiYrsNominal)+'-year gap':''} between nominal and real timelines is the hidden cost of inflation on your FI journey.
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  if(S.invs.length&&el('ch-growth')){
+    charts.growth=new Chart(el('ch-growth'),{
+      type:'line',
+      data:{
+        labels:gYrs.map(y=>`Y${y}`),
+        datasets:[
+          {label:'Bear (Conservative)',data:gC,borderColor:'#F59E0B',borderDash:[6,3],fill:false,tension:0.4,pointRadius:0,borderWidth:2},
+          {label:'Base (Expected)',data:gE,borderColor:'#7C5CFC',backgroundColor:'#7C5CFC12',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#7C5CFC',pointHoverRadius:5,borderWidth:2.5},
+          {label:'Bull (Optimistic)',data:gO,borderColor:'#10D9A8',borderDash:[6,3],fill:false,tension:0.4,pointRadius:0,borderWidth:2},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            mode:'index',intersect:false,
+            callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)}`},
+            bodyColor:'#F0F0F8',backgroundColor:'#1C1C27',borderColor:'#252535',borderWidth:1,
+          }
+        },
+        scales:{
+          x:{grid:{color:'#252535'},ticks:{color:'#7A7A92',font:{family:'Space Grotesk',size:10}}},
+          y:{grid:{color:'#252535'},ticks:{color:'#7A7A92',font:{family:'Space Grotesk',size:10},callback:v=>fmt(v)}}
+        }
+      }
+    });
+  }
+}
+
+// ═══════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════
+function renderBudget(){
+  const total=S.cats.reduce((s,c)=>s+(Number(S.budget[c.id])||0),0);
+  const sal=Number(S.profile.salary)||0,isV=Math.round(total)===100;
+  el('main').innerHTML=`
+  <div class="phd"><div><h1>Budget Settings</h1><p>Manage categories and salary allocation</p></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="mono" style="font-size:13px;font-weight:700;color:${isV?'var(--green)':'var(--red)'}">${total.toFixed(1)}%/100%</span>
+      <button class="btn-s" onclick="autoBalance()">⚖️ Balance</button>
+      <button class="btn" onclick="saveBudgetAndProfile()" id="save-btn">${isV?'Save Changes':'Fix First'}</button>
+    </div>
+  </div>
+  ${!isV?`<div class="alert ${total>100?'ae':'aw'}" style="margin-bottom:14px">${ICONS.warn} Allocations must total 100%. Currently ${total.toFixed(1)}%. ${total>100?'Reduce some.':'Click ⚖️ Balance to fill remaining '+(100-total).toFixed(1)+'%.'}</div>`:''}
+  <div class="grid2">
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="sec">Profile</div>
+        <div class="frow">
+          <div><label class="lbl">Your Name</label><input id="f-pname" value="${S.profile.name||''}" placeholder="e.g. Arjun Sharma"></div>
+          <div><label class="lbl">Monthly Salary (₹)</label><input type="number" id="f-psal" value="${S.profile.salary||''}" placeholder="e.g. 60000"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="sec" style="margin-bottom:0">Categories & Allocations</div>
+          <button class="btn-s" onclick="openAddCategory()" style="padding:6px 12px;font-size:12px">${ICONS.plus} Add Category</button>
+        </div>
+        <div id="cat-list">
+          ${S.cats.map(c=>{const val=Number(S.budget[c.id])||0,mo=(val/100)*sal;return`<div class="cat-row" id="catrow-${c.id}">
+            <span style="font-size:18px;width:28px;text-align:center;flex-shrink:0">${c.emoji}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:500;margin-bottom:5px">${c.label}</div>
+              <input type="range" min="0" max="60" step="0.5" value="${val}" style="width:100%;accent-color:${c.color};background:linear-gradient(to right,${c.color} ${val/60*100}%,var(--border) ${val/60*100}%)" oninput="updateBudget('${c.id}',this.value)">
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+              <div style="display:flex;align-items:center;gap:4px">
+                <button class="btn-xs" onclick="adjustBudget('${c.id}',-5)">-5</button>
+                <button class="btn-xs" onclick="adjustBudget('${c.id}',-1)">-1</button>
+                <input type="number" min="0" max="100" step="0.5" value="${val}" style="width:52px;text-align:center;padding:4px 6px;font-size:12px;font-family:'JetBrains Mono'" onchange="updateBudget('${c.id}',this.value)" id="pct-${c.id}">
+                <button class="btn-xs" onclick="adjustBudget('${c.id}',1)">+1</button>
+                <button class="btn-xs" onclick="adjustBudget('${c.id}',5)">+5</button>
+              </div>
+              <div class="mono" style="font-size:11px;color:var(--muted)">${fmt(mo)}/mo</div>
+            </div>
+            <button class="btn-del" onclick="deleteCat('${c.id}')" style="margin-left:6px">${ICONS.trash}</button>
+          </div>`;}).join('')}
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="sec">Monthly Breakdown</div>
+        ${sal>0?`<div style="display:flex;flex-direction:column;gap:7px">
+          ${S.cats.map(c=>{const pct=Number(S.budget[c.id])||0,amt=pct/100*sal;return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg);border-radius:8px"><span style="font-size:12px;color:#B0B0C8">${c.emoji} ${c.label}</span><div style="text-align:right"><div class="mono" style="font-size:12px;font-weight:600;color:${c.color}">${fmt(amt)}</div><div style="font-size:10px;color:var(--muted)">${pct.toFixed(1)}%</div></div></div>`;}).join('')}
+          <div style="display:flex;justify-content:space-between;padding:9px 10px;background:var(--surf2);border-radius:8px;margin-top:4px"><span style="font-size:13px;font-weight:600">Total</span><span class="mono" style="font-weight:700;color:${isV?'var(--green)':'var(--red)'}">${fmt(sal)}</span></div>
+        </div>`:`<div class="alert aw">${ICONS.info} Enter salary above.</div>`}
+      </div>
+      <div class="card">
+        <div class="sec">Quick Tips</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--muted)">
+          <div>📏 ±1 and ±5 buttons for quick adjustments</div><div>⚖️ Balance auto-fills remaining %</div><div>➕ Add custom categories for unique needs</div><div>💡 50/30/20: 50% needs, 30% wants, 20% savings</div><div>🛡️ Aim for 3-6 months expenses as emergency fund</div><div>💳 Pay full card bill each month to avoid interest</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function updateBudget(id,val){
+  const v=Math.max(0,Math.min(100,parseFloat(val)||0));S.budget[id]=v;
+  const pi=el('pct-'+id);if(pi)pi.value=v;
+  const ri=document.querySelector(`#catrow-${id} input[type=range]`);if(ri){ri.value=v;const cat=getCat(id);ri.style.background=`linear-gradient(to right,${cat.color} ${v/60*100}%,var(--border) ${v/60*100}%)`;}
+  const total=S.cats.reduce((s,c)=>s+(Number(S.budget[c.id])||0),0),isV=Math.round(total)===100;
+  const tm=document.querySelector('.phd .mono');if(tm){tm.textContent=`${total.toFixed(1)}%/100%`;tm.style.color=isV?'var(--green)':'var(--red)';}
+  const sb=el('save-btn');if(sb)sb.textContent=isV?'Save Changes':'Fix First';
+}
+function adjustBudget(id,d){const c=Number(S.budget[id])||0;updateBudget(id,Math.max(0,Math.min(100,c+d)));}
+function autoBalance(){const t=S.cats.reduce((s,c)=>s+(Number(S.budget[c.id])||0),0),diff=100-t;if(Math.abs(diff)<0.01)return;const sh=diff/S.cats.length;S.cats.forEach(c=>{S.budget[c.id]=Math.max(0,Math.round(((Number(S.budget[c.id])||0)+sh)*10)/10);});renderBudget();}
+function deleteCat(id){if(!confirm(`Remove "${getCat(id).label}"? Expenses remain.`))return;S.cats=S.cats.filter(c=>c.id!==id);delete S.budget[id];save();renderBudget();}
+function saveBudgetAndProfile(){
+  const name=el('f-pname').value.trim(),salary=Number(el('f-psal').value)||0;
+  const t=S.cats.reduce((s,c)=>s+(Number(S.budget[c.id])||0),0);
+  if(Math.round(t)!==100){alert('Allocations must total 100%. Currently: '+t.toFixed(1)+'%');return;}
+  S.profile={name,salary};save();
+  const btn=el('save-btn');if(btn){btn.textContent='✓ Saved!';btn.style.background='var(--green)';setTimeout(()=>{btn.textContent='Save Changes';btn.style.background='';},2000);}
+  renderSidebar();
+}
+
+// ═══════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════
+function renderReports(){
+  const sal=Number(S.profile.salary)||0,now=new Date();
+  const last6=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1),k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;const spent=S.expenses.filter(e=>mKey(e.date)===k).reduce((s,e)=>s+Number(e.amt),0);return{label:d.toLocaleString('en-IN',{month:'short'}),spent,budget:sal,key:k};});
+  const thisMoExp=S.expenses.filter(e=>mKey(e.date)===thisMonth());
+  const catSpend=S.cats.map(c=>({...c,alloc:(S.budget[c.id]||0)/100*sal,spent:thisMoExp.filter(e=>e.cat===c.id).reduce((s,e)=>s+Number(e.amt),0)})).filter(c=>c.alloc>0||c.spent>0);
+  const byType={};S.invs.forEach(i=>{byType[i.type]=(byType[i.type]||0)+invTotalInvested(i);});
+  el('main').innerHTML=`
+  <div class="phd"><div><h1>Reports</h1><p>Financial patterns and insights</p></div></div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="sec">6-Month Spending Trend</div>
+    <div style="position:relative;height:200px"><canvas id="ch-bar"></canvas></div>
+    <div style="display:flex;gap:14px;margin-top:8px">${[['#7C5CFC','Spent'],['#7C5CFC33','Budget']].map(([c,l])=>`<span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block"></span>${l}</span>`).join('')}</div>
+  </div>
+  <div class="grid2" style="margin-bottom:14px">
+    <div class="card"><div class="sec">This Month – Budget vs Actual</div><div style="display:flex;flex-direction:column;gap:10px">${catSpend.map(c=>{const pct=c.alloc>0?Math.min(100,c.spent/c.alloc*100):100,over=c.spent>c.alloc&&c.alloc>0;return`<div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#B0B0C8">${c.emoji} ${c.label.split(' ')[0]}</span><span class="mono" style="color:${over?'var(--red)':'var(--text)'};font-size:11px">${fmt(c.spent)} <span style="color:var(--subtle)">/ ${fmt(c.alloc)}</span></span></div><div class="progress" style="height:5px"><div class="pbar" style="width:${pct}%;background:${over?'var(--red)':c.color}"></div></div></div>`;}).join('')}</div></div>
+    <div class="card"><div class="sec">Investment Portfolio</div>
+      ${S.invs.length?`<div style="display:flex;justify-content:center;margin-bottom:12px"><canvas id="ch-rpie" width="150" height="150"></canvas></div>
+        <div style="display:flex;flex-direction:column;gap:7px">${INV_TYPES.filter(t=>byType[t.id]).map(t=>`<div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#B0B0C8"><span style="width:7px;height:7px;border-radius:2px;background:${t.color};display:inline-block"></span>${t.emoji} ${t.label.split('/')[0].trim()}</span><div style="text-align:right"><div class="mono" style="font-size:12px;font-weight:600">${fmt(byType[t.id])}</div><div style="font-size:10px;color:var(--muted)">${(byType[t.id]/(S.invs.reduce((s,i)=>s+invTotalInvested(i),0)||1)*100).toFixed(0)}%</div></div></div>`).join('')}</div>`:`<div class="empty"><div class="ei">📊</div><p>No investments yet</p></div>`}
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec">Monthly Summary</div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Month</th><th>Budget</th><th>Spent</th><th>Card Spend</th><th>Saved</th><th>Savings %</th></tr></thead>
+    <tbody>${last6.map(m=>{const saved=Math.max(0,m.budget-m.spent),svPct=m.budget>0?saved/m.budget*100:0,cardSpent=S.expenses.filter(e=>mKey(e.date)===m.key&&e.cardId).reduce((s,e)=>s+Number(e.amt),0);return`<tr><td style="font-weight:500">${mLabel(m.key)}</td><td class="mono">${fmt(m.budget)}</td><td class="mono c-r" style="font-weight:600">${fmt(m.spent)}</td><td class="mono" style="color:var(--amber);font-weight:600">${fmt(cardSpent)}</td><td class="mono" style="color:${saved>=0?'var(--green)':'var(--red)'};font-weight:600">${fmt(saved)}</td><td><div style="display:flex;align-items:center;gap:8px"><div class="progress" style="flex:1"><div class="pbar" style="width:${Math.min(100,svPct)}%;background:var(--green)"></div></div><span class="mono" style="font-size:11px;color:var(--muted);min-width:32px">${svPct.toFixed(0)}%</span></div></td></tr>`;}).join('')}</tbody></table></div>
+  </div>`;
+  charts.bar=new Chart(el('ch-bar'),{type:'bar',data:{labels:last6.map(m=>m.label),datasets:[{label:'Budget',data:last6.map(m=>m.budget),backgroundColor:'#7C5CFC33',borderRadius:4},{label:'Spent',data:last6.map(m=>m.spent),backgroundColor:'#7C5CFC',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{bodyColor:'#F0F0F8',backgroundColor:'#1C1C27',borderColor:'#252535',borderWidth:1}},scales:{x:{grid:{display:false},ticks:{color:'#7A7A92',font:{family:'Space Grotesk',size:11}}},y:{grid:{color:'#252535'},ticks:{color:'#7A7A92',font:{family:'Space Grotesk',size:11},callback:v=>fmt(v)}}}}});
+  const rp=INV_TYPES.filter(t=>byType[t.id]);if(rp.length&&el('ch-rpie'))charts.rpie=new Chart(el('ch-rpie'),{type:'doughnut',data:{datasets:[{data:rp.map(t=>byType[t.id]),backgroundColor:rp.map(t=>t.color),borderWidth:0}]},options:{cutout:'60%',plugins:{legend:{display:false}},animation:{duration:500}}});
+}
+
+// ═══════════════════════════════════════
+// MODAL SYSTEM
+// ═══════════════════════════════════════
+function openModal(html){el('modal').innerHTML=html;el('ov').classList.add('open');}
+function closeModal(){el('ov').classList.remove('open');el('modal').innerHTML='';el('modal').classList.remove('wide');}
+function ovClick(e){if(e.target===el('ov'))closeModal();}
+
+// Setup
+function openSetup(){openModal(`
+  <div class="mhd"><h2>${S.profile.name?'Edit Profile':'Welcome to Moneta 👋'}</h2>${S.profile.name?`<button class="btn-del" onclick="closeModal()">${ICONS.x}</button>`:''}</div>
+  ${!S.profile.name?'<p style="color:var(--muted);font-size:13px;margin-bottom:16px">Set up your profile to start managing your finances smartly.</p>':''}
+  <div class="fcol">
+    <div><label class="lbl">Your Name</label><input id="m-name" value="${S.profile.name||''}" placeholder="e.g. Arjun Sharma"></div>
+    <div><label class="lbl">Monthly In-Hand Salary (₹)</label><input type="number" id="m-sal" value="${S.profile.salary||''}" placeholder="e.g. 60000"></div>
+    <div style="font-size:11px;color:var(--subtle)">Take-home salary after all deductions</div>
+    <button class="btn" style="justify-content:center;margin-top:4px" onclick="saveSetup()">${S.profile.name?'Save Changes':'Get Started →'}</button>
+  </div>`);}
+function saveSetup(){const name=el('m-name').value.trim(),salary=Number(el('m-sal').value)||0;if(!name||!salary){alert('Enter name and salary.');return;}S.profile={name,salary};save();closeModal();renderSidebar();navigate(S.view);}
+
+// Expense Modal (with credit card option)
+let _expPayMode='cash';
+function openAddExpense(){
+  _expPayMode='cash';
+  openModal(`
+  <div class="mhd"><h2>Add Expense</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div>
+      <label class="lbl">Payment Mode</label>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="pm-cash" onclick="setExpPayMode('cash')">💵 Cash / UPI</button>
+        <button class="toggle-btn" id="pm-card" onclick="setExpPayMode('card')" ${!S.cards.length?'disabled title="Add a card first"':''}>💳 Credit Card${!S.cards.length?' (no cards)':''}</button>
+      </div>
+    </div>
+    <div id="card-sel-wrap" style="display:none">
+      <label class="lbl">Select Card</label>
+      <select id="m-cardid">
+        ${S.cards.map(c=>`<option value="${c.id}">${c.name} — ${fmt(cardOutstanding(c))} outstanding</option>`).join('')}
+      </select>
+    </div>
+    <div><label class="lbl">Category</label><select id="m-cat">${S.cats.map(c=>`<option value="${c.id}">${c.emoji} ${c.label}</option>`).join('')}</select></div>
+    <div><label class="lbl">Amount (₹)</label><input type="number" id="m-amt" placeholder="0" min="0"></div>
+    <div><label class="lbl">Description (optional)</label><input id="m-desc" placeholder="e.g. Monthly rent, Swiggy, Amazon..."></div>
+    <div><label class="lbl">Date</label><input type="date" id="m-date" value="${today()}"></div>
+    <button class="btn" style="justify-content:center;margin-top:4px" onclick="submitExpense()">Add Expense</button>
+  </div>`);}
+function setExpPayMode(mode){
+  _expPayMode=mode;
+  el('pm-cash').classList.toggle('active',mode==='cash');
+  el('pm-card').classList.toggle('active',mode==='card');
+  el('card-sel-wrap').style.display=mode==='card'?'block':'none';
+}
+function submitExpense(){
+  const cat=el('m-cat').value,amt=Number(el('m-amt').value),desc=el('m-desc').value,date=el('m-date').value;
+  if(!amt||amt<=0){alert('Enter a valid amount.');return;}
+  const cardId=_expPayMode==='card'&&el('m-cardid')?el('m-cardid').value:null;
+  S.expenses.unshift({id:uid(),cat,amt,desc,date,payMode:_expPayMode,cardId});
+  save();closeModal();navigate(S.view==='expenses'?'expenses':S.view==='cards'?'cards':'dashboard');
+}
+
+// Investment Modal
+let _invMode='sip';
+function openAddInvestment(){
+  _invMode='sip';
+  openModal(`
+  <div class="mhd"><h2>Log Investment</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div><label class="lbl">Mode</label><div class="toggle-row"><button class="toggle-btn active" id="t-sip" onclick="setInvMode('sip')">📊 Monthly SIP</button><button class="toggle-btn" id="t-lump" onclick="setInvMode('lump')">💰 Lump Sum</button></div></div>
+    <div><label class="lbl">Investment Type</label><select id="m-itype" onchange="onInvTypeChange(this.value)">${INV_TYPES.map(t=>`<option value="${t.id}">${t.emoji} ${t.label}</option>`).join('')}</select></div>
+    <div><label class="lbl">Name / Fund</label><input id="m-iname" placeholder="e.g. Axis Bluechip, SBI FD, HDFC Bank..."></div>
+    <div><label class="lbl" id="m-amtlbl">Monthly SIP Amount (₹)</label><input type="number" id="m-iamt" placeholder="0" min="0"></div>
+    <div class="frow">
+      <div><label class="lbl">Start Date</label><input type="date" id="m-idate" value="${today()}"></div>
+      <div><label class="lbl">Expected Annual Return (%)</label><input type="number" id="m-irate" value="12" step="0.1" min="0"></div>
+    </div>
+    <div><label class="lbl">Target Duration (years, optional)</label><input type="number" id="m-idur" placeholder="e.g. 10" min="1"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border-radius:8px;cursor:pointer" onclick="el('m-ief').click()">
+      <input type="checkbox" id="m-ief" style="width:auto">
+      <label for="m-ief" style="font-size:13px;cursor:pointer">🛡️ Count as Emergency Fund</label>
+    </div>
+    <div><label class="lbl">Notes (optional)</label><input id="m-inotes" placeholder="e.g. ELSS 3yr lock-in, expected 12%..."></div>
+    <button class="btn" style="justify-content:center;margin-top:4px" onclick="submitInvestment()">Log Investment</button>
+  </div>`);}
+function setInvMode(mode){_invMode=mode;el('t-sip').classList.toggle('active',mode==='sip');el('t-lump').classList.toggle('active',mode==='lump');el('m-amtlbl').textContent=mode==='sip'?'Monthly SIP Amount (₹)':'Principal Amount (₹)';}
+function onInvTypeChange(id){const t=getInvType(id);el('m-irate').value=t.defRate;setInvMode(t.defMode);}
+function submitInvestment(){const type=el('m-itype').value,name=el('m-iname').value,amt=Number(el('m-iamt').value);if(!amt||amt<=0){alert('Enter a valid amount.');return;}S.invs.unshift({id:uid(),type,name,amt,date:el('m-idate').value,rate:Number(el('m-irate').value)||0,duration:el('m-idur').value||null,notes:el('m-inotes').value,mode:_invMode,isEmergency:el('m-ief').checked});save();closeModal();navigate(S.view==='investments'||S.view==='portfolio'?S.view:'investments');}
+
+// Add Category Modal
+function openAddCategory(){
+  let sc=SWATCHES[0];
+  openModal(`
+  <div class="mhd"><h2>Add Custom Category</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div class="frow">
+      <div style="flex:0 0 90px"><label class="lbl">Emoji</label><input id="m-cemoji" value="📌" style="font-size:22px;text-align:center;padding:6px 4px" maxlength="2"></div>
+      <div><label class="lbl">Category Name</label><input id="m-cname" placeholder="e.g. Gym, Parents, Petrol..."></div>
+    </div>
+    <div><label class="lbl">Color</label><div class="swatches" id="sw-area">${SWATCHES.map(c=>`<div class="sw${c===sc?' sel':''}" style="background:${c}" onclick="selSw(this,'${c}')"></div>`).join('')}</div><input type="hidden" id="m-ccol" value="${sc}"></div>
+    <div><label class="lbl">Initial % Allocation</label><input type="number" id="m-cpct" value="0" min="0" max="100" step="0.5"></div>
+    <button class="btn" style="justify-content:center;margin-top:4px" onclick="submitCategory()">Add Category</button>
+  </div>`);}
+function selSw(el,color){document.querySelectorAll('#sw-area .sw').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');document.getElementById('m-ccol').value=color;}
+function submitCategory(){const name=el('m-cname').value.trim(),emoji=el('m-cemoji').value.trim(),color=el('m-ccol').value,pct=Math.max(0,Math.min(100,Number(el('m-cpct').value)||0));if(!name){alert('Enter a category name.');return;}const id='cat_'+uid();S.cats.push({id,label:name,emoji:emoji||'📌',color,builtIn:false});S.budget[id]=pct;save();closeModal();renderBudget();}
+
+// ─── Wants Modals ─────────────────────────────────────
+let _wantTimeline='date';
+function openAddWant(){
+  _wantTimeline='date';
+  const sixMonths=new Date(Date.now()+180*24*60*60*1000).toISOString().slice(0,10);
+  openModal(`
+  <div class="mhd"><h2>Add a Want ⭐</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div class="fcol">
+    <div class="frow">
+      <div style="flex:0 0 88px">
+        <label class="lbl">Emoji</label>
+        <input id="m-wemoji" value="🛍️" style="font-size:22px;text-align:center;padding:5px 4px" maxlength="2">
+      </div>
+      <div><label class="lbl">What do you want?</label><input id="m-wname" placeholder="Nike shoes, iPhone, Trip to Goa, Gaming PC..."></div>
+    </div>
+    <div class="frow">
+      <div><label class="lbl">Target Amount (₹)</label><input type="number" id="m-wtarget" placeholder="8000" min="0" oninput="updateWantCalc()"></div>
+      <div><label class="lbl">Already Saved (₹)</label><input type="number" id="m-wsaved" value="0" min="0" oninput="updateWantCalc()"></div>
+    </div>
+    <div>
+      <label class="lbl">Timeline</label>
+      <div class="toggle-row" style="margin-bottom:10px">
+        <button class="toggle-btn active" id="wt-date" onclick="setWantTimeline('date')">📅 By a date</button>
+        <button class="toggle-btn" id="wt-months" onclick="setWantTimeline('months')">📆 In X months</button>
+      </div>
+      <div id="w-date-wrap"><label class="lbl">Target Date</label><input type="date" id="m-wdate" value="${sixMonths}" oninput="updateWantCalc()"></div>
+      <div id="w-months-wrap" style="display:none"><label class="lbl">Months to save</label><input type="number" id="m-wmonths" value="6" min="1" max="240" oninput="updateWantCalc()"></div>
+    </div>
+    <!-- Live calculator preview -->
+    <div style="background:var(--bg);border-radius:10px;padding:13px 16px;display:flex;gap:0">
+      <div style="flex:1;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Save per month</div>
+        <div class="mono" style="font-size:20px;font-weight:700;color:var(--accent)" id="wc-monthly">—</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Months to goal</div>
+        <div class="mono" style="font-size:20px;font-weight:700" id="wc-months">—</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Can you afford it?</div>
+        <div style="font-size:13px;font-weight:700" id="wc-afford">—</div>
+      </div>
+    </div>
+    <div>
+      <label class="lbl">Priority</label>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px" id="wprio-grid">
+        ${[['low','😌 Low'],['medium','⭐ Medium'],['high','🔥 High'],['dream','💫 Dream']].map(([v,l],i)=>`<button class="pay-opt${i===1?' sel':''}" onclick="selWantPrio(this,'${v}')"><div class="pay-opt-val" style="font-size:12px">${l}</div></button>`).join('')}
+      </div>
+      <input type="hidden" id="m-wprio" value="medium">
+    </div>
+    <div>
+      <label class="lbl">Color</label>
+      <div class="swatches" id="wsw">${SWATCHES.map((c,i)=>`<div class="sw${i===0?' sel':''}" style="background:${c}" onclick="selWantColor(this,'${c}')"></div>`).join('')}</div>
+      <input type="hidden" id="m-wcol" value="${SWATCHES[0]}">
+    </div>
+    <div><label class="lbl">Notes (optional)</label><input id="m-wnotes" placeholder="Why you want this, which brand, where to buy..."></div>
+    <button class="btn" style="justify-content:center" onclick="submitWant()">Add Goal</button>
+  </div>`);
+  updateWantCalc();
+}
+function setWantTimeline(mode){
+  _wantTimeline=mode;
+  el('wt-date').classList.toggle('active',mode==='date');
+  el('wt-months').classList.toggle('active',mode==='months');
+  el('w-date-wrap').style.display=mode==='date'?'block':'none';
+  el('w-months-wrap').style.display=mode==='months'?'block':'none';
+  updateWantCalc();
+}
+function updateWantCalc(){
+  try{
+    const target=Number(el('m-wtarget').value)||0;
+    const already=Number(el('m-wsaved').value)||0;
+    const rem=Math.max(0,target-already);
+    let months=6;
+    if(_wantTimeline==='date'){
+      const d=new Date(el('m-wdate').value);
+      months=Math.max(1,Math.ceil((d-new Date())/(1000*60*60*24*30.44)));
+    } else {
+      months=Math.max(1,Number(el('m-wmonths').value)||6);
+    }
+    const monthly=rem>0?Math.ceil(rem/months):0;
+    const sal=Number(S.profile.salary)||0;
+    const spent=S.expenses.filter(e=>mKey(e.date)===thisMonth()).reduce((s,e)=>s+Number(e.amt),0);
+    const invOut=thisMonthInvOutflow();
+    const free=Math.max(0,sal-spent-invOut);
+    const canAfford=monthly>0&&free>=monthly;
+    const mc=el('wc-monthly'),mml=el('wc-months'),mca=el('wc-afford');
+    if(mc)mc.textContent=target>0?fmt(monthly):'₹0';
+    if(mml)mml.textContent=months+'mo';
+    if(mca){mca.textContent=monthly===0?'No saving needed':canAfford?'Yes ✓':'Need cuts';mca.style.color=monthly===0?'var(--green)':canAfford?'var(--green)':'var(--red)';}
+  }catch(e){}
+}
+function selWantPrio(el,v){document.querySelectorAll('#wprio-grid .pay-opt').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');document.getElementById('m-wprio').value=v;}
+function selWantColor(sw,c){document.querySelectorAll('#wsw .sw').forEach(s=>s.classList.remove('sel'));sw.classList.add('sel');document.getElementById('m-wcol').value=c;}
+function submitWant(){
+  const name=(el('m-wname').value||'').trim(),target=Number(el('m-wtarget').value)||0;
+  if(!name){alert('Please enter a name for this goal.');return;}
+  if(!target){alert('Please enter a target amount.');return;}
+  S.wants.push({
+    id:uid(),name,emoji:el('m-wemoji').value||'🛍️',targetAmount:target,
+    targetDate:_wantTimeline==='date'?el('m-wdate').value:null,
+    monthsDuration:_wantTimeline==='months'?Number(el('m-wmonths').value)||6:null,
+    priority:el('m-wprio').value||'medium',color:el('m-wcol').value||SWATCHES[0],
+    notes:el('m-wnotes').value,status:'active',contributions:[],
+  });
+  save();closeModal();navigate('wants');
+}
+
+function openContribute(wantId){
+  const w=S.wants.find(x=>x.id===wantId);if(!w)return;
+  const saved=wantTotalSaved(w),rem=wantRemaining(w),monthly=wantMonthlyNeeded(w);
+  openModal(`
+  <div class="mhd"><h2>${w.emoji||'🛍️'} Contribute to Goal</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div style="background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">${w.name}</div>
+    <div style="height:7px;background:var(--surf2);border-radius:7px;overflow:hidden;margin-bottom:8px">
+      <div style="height:100%;width:${wantProgress(w)}%;background:${w.color||'var(--accent)'}"></div>
+    </div>
+    <div style="display:flex;gap:16px;font-size:12px">
+      <span class="c-m">Saved: <strong style="color:var(--green)">${fmt(saved)}</strong></span>
+      <span class="c-m">Remaining: <strong style="color:var(--red)">${fmt(rem)}</strong></span>
+      <span class="c-m">Goal: <strong>${fmt(w.targetAmount)}</strong></span>
+    </div>
+  </div>
+  <div class="fcol">
+    <div>
+      <label class="lbl">Quick amounts</label>
+      <div class="pay-quick">
+        <div class="pay-opt sel" onclick="setCamt(this,${monthly})"><div class="pay-opt-lbl">Monthly target</div><div class="pay-opt-val">${fmt(monthly)}</div></div>
+        <div class="pay-opt" onclick="setCamt(this,${Math.ceil(monthly/2)})"><div class="pay-opt-lbl">Half target</div><div class="pay-opt-val">${fmt(Math.ceil(monthly/2))}</div></div>
+        <div class="pay-opt" onclick="setCamt(this,${rem})"><div class="pay-opt-lbl">Full goal</div><div class="pay-opt-val">${fmt(rem)}</div></div>
+      </div>
+    </div>
+    <div><label class="lbl">Amount (₹)</label><input type="number" id="m-camt" value="${monthly}" min="1" oninput="document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'))"></div>
+    <div><label class="lbl">Date</label><input type="date" id="m-cdate" value="${today()}"></div>
+    <div><label class="lbl">Note (optional)</label><input id="m-cnote" placeholder="e.g. Saved from bonus, skipped dining out..."></div>
+    <button class="btn-g" style="justify-content:center" onclick="submitContribution('${wantId}')">Add Contribution</button>
+  </div>`);
+}
+function setCamt(el,amt){document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');document.getElementById('m-camt').value=amt;}
+function submitContribution(wantId){
+  const w=S.wants.find(x=>x.id===wantId);if(!w)return;
+  const amt=Number(el('m-camt').value);
+  if(!amt||amt<=0){alert('Enter a valid amount.');return;}
+  w.contributions=w.contributions||[];
+  w.contributions.push({id:uid(),date:el('m-cdate').value,amount:amt,note:el('m-cnote').value});
+  if(wantTotalSaved(w)>=Number(w.targetAmount))w.status='achieved';
+  save();closeModal();navigate('wants');
+}
+function achieveWant(id){
+  if(!confirm('Mark this goal as achieved? 🎉'))return;
+  const w=S.wants.find(x=>x.id===id);if(w)w.status='achieved';
+  save();navigate('wants');
+}
+function deleteWant(id){
+  if(!confirm('Delete this goal and all contributions?'))return;
+  S.wants=S.wants.filter(w=>w.id!==id);save();navigate('wants');
+}
+// ═══════════════════════════════════════
+// BACKUP & DATA
+// ═══════════════════════════════════════
+function exportData(){
+  const payload={_monetaBackup:true,_version:'2.0',_exportDate:new Date().toISOString(),_appName:'Moneta Personal Finance',_recordCount:{expenses:S.expenses.length,investments:S.invs.length,cards:S.cards.length,wants:S.wants.length,categories:S.cats.length},profile:S.profile,cats:S.cats,budget:S.budget,expenses:S.expenses,invs:S.invs,cards:S.cards,wants:S.wants,inflationRate:S.inflationRate||6};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`moneta-backup-${today()}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  S.lastExportDate=today();save();
+  showToast('✓ Backup downloaded — keep it somewhere safe!','green');
+  if(S.view==='backup')renderBackup();else renderSidebar();
+}
+
+function triggerImport(){el('file-import').click();}
+
+function handleImportFile(evt){
+  const file=evt.target.files[0];if(!file)return;
+  evt.target.value='';
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data._monetaBackup){alert('This file is not a valid Moneta backup.\n\nOnly import .json files exported from Moneta.');return;}
+      showImportPreview(data);
+    }catch(err){alert('Could not read this file.\n\nMake sure it is a valid JSON file exported from Moneta.');}
+  };
+  reader.readAsText(file);
+}
+
+let _pendingImport=null;
+function showImportPreview(data){
+  _pendingImport=data;
+  const expDate=data._exportDate?new Date(data._exportDate).toLocaleString('en-IN',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Unknown date';
+  const p=data.profile||{};
+  const curTotal=S.expenses.length+S.invs.length+S.cards.length+S.wants.length;
+  openModal(`
+  <div class="mhd"><h2>Import Backup</h2><button class="btn-del" onclick="closeModal()">${ICONS.x}</button></div>
+  <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Backup details</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:4px">${expDate}</div>
+    <div style="font-size:12px;color:var(--muted)">${p.name?`Profile: ${p.name}`:'No profile'}${p.salary?' · '+fmt(p.salary)+'/mo':''}</div>
+    ${data._version?`<div style="font-size:10px;color:var(--subtle);margin-top:3px">Moneta backup v${data._version}</div>`:''}
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    ${[['💸 Expenses',(data.expenses||[]).length+' records'],['📈 Investments',(data.invs||[]).length+' instruments'],['💳 Credit Cards',(data.cards||[]).length+' cards'],['⭐ Goals',(data.wants||[]).length+' wants'],['📂 Categories',(data.cats||[]).length+' categories'],['💰 Budget',Object.keys(data.budget||{}).length+' allocations']].map(([l,v])=>`<div style="background:var(--surf2);border-radius:8px;padding:10px 12px"><div style="font-size:12px;font-weight:500">${l}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${v}</div></div>`).join('')}
+  </div>
+  <div class="alert ae" style="margin-bottom:14px">${ICONS.warn} <span>This will <strong>permanently replace ALL current data</strong>. Your ${curTotal} existing records will be deleted.</span></div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-s" onclick="closeModal()" style="flex:1">Cancel</button>
+    <button style="flex:1;background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer" onclick="confirmImport()">Import & Replace All</button>
+  </div>`);
+}
+
+function confirmImport(){
+  const data=_pendingImport;if(!data)return;
+  if(data.profile)S.profile=data.profile;
+  if(data.cats&&data.cats.length)S.cats=data.cats;
+  if(data.budget)S.budget=data.budget;
+  if(data.expenses)S.expenses=data.expenses;
+  if(data.invs)S.invs=data.invs;
+  if(data.cards)S.cards=data.cards;
+  if(data.wants)S.wants=data.wants;
+  if(data.inflationRate)S.inflationRate=data.inflationRate;
+  S.lastExportDate=data._exportDate?data._exportDate.slice(0,10):null;
+  _pendingImport=null;save();closeModal();renderSidebar();navigate('dashboard');
+  showToast(`✓ Imported! ${S.expenses.length} expenses, ${S.invs.length} investments, ${S.cards.length} cards, ${S.wants.length} goals restored.`,'green');
+}
+
+function clearAllData(){
+  if(!confirm('⚠️ This permanently deletes ALL financial data — every expense, investment, card, goal, and setting.\n\nThis CANNOT be undone. Are you absolutely sure?'))return;
+  if(!confirm('Final confirmation: Delete everything and start fresh?'))return;
+  try{localStorage.removeItem('moneta2');localStorage.removeItem('moneta');}catch(e){}
+  S.profile={name:'',salary:0};
+  S.cats=[...DEFAULT_CATS.map(c=>({...c}))];
+  S.budget=Object.fromEntries(DEFAULT_CATS.map(c=>[c.id,c.def]));
+  S.expenses=[];S.invs=[];S.cards=[];S.wants=[];S.incomes=[];S.recurs=[];
+  S.inflationRate=6;S.lastExportDate=null;
+  S.expFilter={month:thisMonth(),cat:'all',payMode:'all'};
+  renderSidebar();navigate('dashboard');setTimeout(openSetup,400);
+}
+
+function showToast(msg,type='green'){
+  const t=document.createElement('div');
+  const bg=type==='green'?'#10D9A8':'#F43F5E';
+  const col=type==='green'?'#042e24':'#fff';
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;background:${bg};color:${col};padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;font-family:'Space Grotesk',sans-serif;box-shadow:0 4px 24px rgba(0,0,0,.5);transition:opacity 0.3s;max-width:400px;line-height:1.4`;
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),320);},4000);
+}
+
+function renderBackup(){
+  const totalRec=S.expenses.length+S.invs.length+S.cards.length+S.wants.length;
+  const hasData=totalRec>0||S.profile.name;
+  const days=S.lastExportDate?Math.floor((new Date()-new Date(S.lastExportDate))/(1000*60*60*24)):-1;
+  const bAge=days<0?'Never backed up':`Last backup: ${days===0?'Today':days===1?'Yesterday':days+' days ago'}`;
+  const bSt=days<0?(hasData?'none':'clean'):days<=7?'good':days<=14?'warn':'stale';
+  const stConf={
+    none:{col:'var(--red)',bg:'#F43F5E0D',icon:'⛔',msg:'You have data but <strong>no backup yet</strong>. If you clear this browser or switch devices, everything will be lost.'},
+    clean:{col:'var(--muted)',bg:'var(--surf2)',icon:'💤',msg:'No data to back up yet. Start adding records and export regularly.'},
+    good:{col:'var(--green)',bg:'#10D9A80D',icon:'✅',msg:`Backed up <strong>${days===0?'today':days+' day'+( days!==1?'s':'')+' ago'}</strong>. Your data is safe.`},
+    warn:{col:'var(--amber)',bg:'#F59E0B0D',icon:'⚠️',msg:`Last backup was <strong>${days} days ago</strong>. Consider exporting again soon.`},
+    stale:{col:'var(--red)',bg:'#F43F5E0D',icon:'🔴',msg:`Last backup was <strong>${days} days ago</strong>. Your recent records are at risk — export now.`},
+  }[bSt];
+
+  let sizeStr='—';
+  try{const b=new TextEncoder().encode(JSON.stringify({profile:S.profile,cats:S.cats,budget:S.budget,expenses:S.expenses,invs:S.invs,cards:S.cards,wants:S.wants})).length;sizeStr=b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(2)+' MB';}catch(e){}
+  const allDates=[...S.expenses,...S.invs].map(x=>x.date).filter(Boolean).sort();
+  const oldestDate=allDates[0]?new Date(allDates[0]).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—';
+
+  el('main').innerHTML=`
+  <div class="phd">
+    <div><h1>Backup & Data</h1><p>Export, import, and protect your financial records</p></div>
+    <button class="btn" onclick="exportData()">${ICONS.download} Export Now</button>
+  </div>
+
+  <!-- Status -->
+  <div style="background:${stConf.bg};border:1px solid ${stConf.col}44;border-left:4px solid ${stConf.col};border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+    <span style="font-size:24px;flex-shrink:0">${stConf.icon}</span>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600;color:${stConf.col};margin-bottom:3px">${bAge}</div>
+      <div style="font-size:12px;color:#B0B0C8">${stConf.msg}</div>
+    </div>
+    ${bSt!=='good'&&bSt!=='clean'?`<button class="btn" onclick="exportData()" style="flex-shrink:0">${ICONS.download} Backup Now</button>`:''}
+  </div>
+
+  <!-- Summary strip -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px">
+    ${[['💸','Expenses',S.expenses.length],['📈','Investments',S.invs.length],['💳','Cards',S.cards.length],['⭐','Goals',S.wants.length],['📂','Categories',S.cats.length],['💾','Data',sizeStr]].map(([e,l,v])=>`<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center"><div style="font-size:18px;margin-bottom:4px">${e}</div><div class="mono" style="font-size:15px;font-weight:700">${v}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${l}</div></div>`).join('')}
+  </div>
+
+  <!-- Meta strip -->
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:13px 18px;margin-bottom:16px;display:flex;gap:24px;flex-wrap:wrap">
+    ${[['Tracking since',oldestDate],['Storage','localStorage (this browser only)'],['Profile',S.profile.name||'Not set'],['Salary',S.profile.salary?fmt(S.profile.salary)+'/mo':'Not set']].map(([l,v])=>`<div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">${l}</div><div style="font-size:13px;font-weight:500">${v}</div></div>`).join('')}
+  </div>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <!-- Export -->
+    <div class="card">
+      <div class="sec">${ICONS.download} Export Your Data</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Download a complete snapshot as a <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">.json</code> file. Save it to Google Drive, email it to yourself, or keep it on a USB drive.</p>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+        ${['All expenses, categories & dates','Investments, rates & portfolio data','Credit cards & payment history','Goals, timelines & contributions','Budget allocations & all settings','Profile, salary & preferences'].map(item=>`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#B0B0C8"><span style="color:var(--green);flex-shrink:0">${ICONS.check}</span>${item}</div>`).join('')}
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:10px 13px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--muted)">📁 <code style="font-size:11px">moneta-backup-${today()}.json</code></span>
+        <span style="font-size:10px;color:var(--subtle)">${sizeStr}</span>
+      </div>
+      <button class="btn" onclick="exportData()" style="width:100%;justify-content:center">${ICONS.download} Download Backup File</button>
+    </div>
+
+    <!-- Import -->
+    <div class="card">
+      <div class="sec">${ICONS.upload} Restore from Backup</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Import a previously exported backup file. Use this to <strong style="color:var(--text)">switch devices</strong>, recover lost data, or transfer to a new browser.</p>
+      <div class="alert ae" style="margin-bottom:14px">${ICONS.warn} <span>Importing <strong>replaces ALL current data</strong>. Export first if you want to keep your existing ${totalRec} records.</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        ${['Locate your moneta-backup-*.json file','Click the button below and select the file','Review the backup summary and confirm'].map((s,i)=>`<div style="display:flex;align-items:center;gap:9px;font-size:12px;color:#B0B0C8"><span style="width:18px;height:18px;background:var(--surf2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:700">${i+1}</span>${s}</div>`).join('')}
+      </div>
+      <button class="btn-s" onclick="triggerImport()" style="width:100%;justify-content:center">${ICONS.upload} Select Backup File to Import</button>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <!-- Tips -->
+    <div class="card">
+      <div class="sec">🔒 How to Keep Your Data Safe</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        ${[['📁','Export weekly','Back up after every major entry session or at least once a week'],['☁️','Cloud storage','Save the backup to Google Drive, OneDrive, or iCloud immediately'],['📧','Email yourself','Attach the .json to an email draft for a quick off-device copy'],['📱','Cross-device','Export on your laptop → import on your phone (or vice versa)'],['🚫','Never clear','Avoid clearing browser data or switching browsers without exporting first'],['🔄','New browser','Export → import in the new browser. Don\'t assume data transfers automatically']].map(([e,t,d])=>`<div style="display:flex;gap:10px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">${e}</span><div><div style="font-size:12px;font-weight:600">${t}</div><div style="font-size:11px;color:var(--muted);margin-top:1px">${d}</div></div></div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card" style="border-color:#F43F5E33">
+      <div class="sec" style="color:var(--red)">⚠️ Danger Zone</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">These actions are <strong>permanent and irreversible</strong>. Export a backup before proceeding.</p>
+      <div style="background:var(--bg);border-radius:9px;padding:14px 15px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">Clear All Data & Reset</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Deletes every expense, investment, card, goal, budget setting, and profile. App resets to blank state.</div>
+        <button onclick="clearAllData()" style="width:100%;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:8px;padding:9px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">${ICONS.trash} Delete Everything & Start Over</button>
+      </div>
+      <div style="font-size:11px;color:var(--subtle);display:flex;flex-direction:column;gap:4px">
+        <div>• You will be asked to confirm <strong>twice</strong> before deletion</div>
+        <div>• Only affects <strong>this browser</strong> — other devices unaffected</div>
+        <div>• Removes <code>moneta</code> and <code>moneta2</code> from localStorage</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function init(){load();renderSidebar();navigate('dashboard');if(!S.profile.name)setTimeout(openSetup,400);}
+init();
+</script>
+</body>
+</html>
